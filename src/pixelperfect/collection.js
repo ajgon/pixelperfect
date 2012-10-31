@@ -62,9 +62,38 @@ Collection.prototype = {
     event: function(name, callback) {
         var e;
 
-        for(e = 0; e < this.elements_length; e++) {
-            this.elements[e].addEventListener(name, callback.bind( new Collection(this.elements[e]) ) );
-        }
+        this.elements.every(function(element) {
+            element.addEventListener(name, callback.bind( new Collection(element) ) );
+            return true;
+        });
+
+        return this;
+    },
+
+    remove: function() {
+        this.elements.every(function(element) {
+            element.parentNode.removeChild(element);
+            return true;
+        });
+
+        return this;
+    },
+
+    removeClass: function( name ) {
+        this.elements.every(function(element) {
+            element.className = element.className.replace(RegExp(name, 'g'), '').replace(/^\s+|\s+$/, '');
+            return true;
+        }.bind(this));
+
+        return this;
+    },
+
+    addClass: function( name ) {
+        this.removeClass(name);
+        this.elements.every(function(element) {
+            element.className += ' ' + name;
+            return true;
+        }.bind(this));
 
         return this;
     }
