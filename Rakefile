@@ -24,7 +24,9 @@ def build production = true
   css = YUI::CssCompressor.new.compress( css )
 
   # Build JS
-  js = closure sprockets.find_asset('pixelperfect.js').to_s.sub('##CSS_BASE64##', Base64.strict_encode64(css))
+  js = closure sprockets.find_asset('pixelperfect.js').to_s
+  js.sub!('##CSS_BASE64##', Base64.strict_encode64(css))
+  js.sub!('##HTML##', File.read(File.join(File.dirname(__FILE__), 'src', 'pixelperfect.html')).gsub(/>\s+</, '><').strip )
   js = Uglifier.compile(js) if production
 
   File.open('dist/pixelperfect.js', 'w') do |f|

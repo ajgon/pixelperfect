@@ -30,7 +30,11 @@ DragAndDrop = {
     },
 
     init: function() {
+        var draganddrop, element, pos;
         document.addEventListener( 'mouseup', function() {
+            if(this.currentDragged) {
+                localStorage.setItem('pixelperfect:draganddrop:' + this.currentDragged.getAttribute('id'), parseInt(this.currentDragged.style.left, 10).toString() + ',' + parseInt(this.currentDragged.style.top, 10).toString());
+            }
             this.currentDragged = false;
         } );
 
@@ -43,5 +47,14 @@ DragAndDrop = {
             }
 
         });
+
+        for(draganddrop in localStorage) {
+            if( draganddrop.match(/pixelperfect:draganddrop/) && localStorage.hasOwnProperty(draganddrop) ) {
+                element = document.getElementById( draganddrop.replace('pixelperfect:draganddrop:', '') );
+                pos = localStorage.getItem(draganddrop).split(',');
+                element.style.left = pos[0] + 'px';
+                element.style.top = pos[1] + 'px';
+            }
+        }
     }
 };

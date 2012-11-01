@@ -96,5 +96,16 @@ Collection.prototype = {
         }.bind(this));
 
         return this;
-    }
+    },
+
+    setOpacity: function( value ) {
+        this.elements.every(function(element) {
+            element.style.opacity = (parseInt(value, 10) / 100.0).toString();
+            return true;
+        }.bind(this));
+
+        return this;
+    },
+
+
 };

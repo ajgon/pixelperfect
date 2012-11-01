@@ -15,7 +15,7 @@ var Layers = {
             img.onload = function() {
                 var blob, layer_id;
                 blob = img.src.replace('blob:', '');
-                layer_id = 'pixelperfect:' + blob;
+                layer_id = 'pixelperfect:layer:' + blob;
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
@@ -39,13 +39,21 @@ var Layers = {
         $('#pixelperfect-layers').elements[0].appendChild(layer_container);
     },
     selectLayer: function( layer_id ) {
+        var img,
+            selected_layer = localStorage.getItem('pixelperfect:selected');
+
+        if(layer_id == selected_layer) {
+            return;
+        }
+
         if( layer_id === undefined ) {
-            layer_id = localStorage.getItem('pixelperfect:selected');
+            layer_id = this.fillSelected();
         }
         if(layer_id) {
             $('#pixelperfect-layers .pixelperfect-layer').removeClass('pixelperfect-layer-selected');
             $('#pixelperfect-layers .pixelperfect-layer[data-id="' + layer_id + '"]').addClass('pixelperfect-layer-selected');
             localStorage.setItem('pixelperfect:selected', layer_id);
+            PixelPerfect.refreshOverlay( layer_id );
         }
     },
     removeLayer: function( layer_id ) {
@@ -59,15 +67,11 @@ var Layers = {
 
         if(!selected || !localStorage.getItem(selected)) {
             for( layer in localStorage ) {
-                if( layer.match(/^pixelperfect:[0-9a-f]+/) && localStorage.hasOwnProperty(layer) ) {
+                if( layer.match(/^pixelperfect:layer/) && localStorage.hasOwnProperty(layer) ) {
                     selected = layer;
                     break;
                 }
             }
-        }
-
-        if(selected) {
-            localStorage.setItem('pixelperfect:selected', selected);
         }
 
         return selected;
@@ -77,24 +81,23 @@ var Layers = {
 
         $('#pixelperfect-layers .pixelperfect-layer').remove();
         for( layer in localStorage ) {
-            if( layer.match(/^pixelperfect:[0-9a-f]+/) && localStorage.hasOwnProperty(layer) ) {
+            if( layer.match(/^pixelperfect:layer/) && localStorage.hasOwnProperty(layer) ) {
                 this.insertLayer( localStorage.getItem(layer), layer );
             }
         }
-
-        this.selectLayer( this.fillSelected() );
+        this.selectLayer();
     },
     init: function() {
         this.refresh();
-        // TODO make those events 'live'
-        $('#pixelperfect-layers .pixelperfect-layer').event('click', function(e) {
+
+        $('#pixelperfect-layers').event('click', function(e) {
+            var id;
             e.preventDefault();
-            Layers.selectLayer( this.elements[0].getAttribute('data-id') );
-        });
-        $('#pixelperfect-layers .pixelperfect-button').event('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            Layers.removeLayer.call( Layers, this.elements[0].parentNode.getAttribute('data-id') );
+            if(e.target.className.match('pixelperfect-button')) {
+                Layers.removeLayer.call( Layers, e.target.parentNode.getAttribute('data-id') );
+            } else if((id = e.target.getAttribute('data-id')) || (id = e.target.parentNode.getAttribute('data-id'))) {
+                Layers.selectLayer( id );
+            }
         });
     }
 };

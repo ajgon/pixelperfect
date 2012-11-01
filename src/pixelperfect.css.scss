@@ -17,6 +17,8 @@ $selected: #edeff4;
   -o-box-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
   -ms-box-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
+  z-index: 2147483647;
+  background: #fff;
 
   * {
     font-family: Arial, Helvetica, sans-serif;
@@ -152,4 +154,8 @@ $selected: #edeff4;
     }
 
   }
+}
+
+#pixelperfect-overlay {
+  position: absolute;
 }
