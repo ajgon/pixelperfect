@@ -45,6 +45,10 @@ var PixelPerfect = {
             overlay = document.getElementById('pixelperfect-overlay');
         }
 
+        if(!overlay) {
+            return false;
+        }
+
         if( this.options.overlay == 'below' ) {
             $(this.wrapper).setOpacity( this.options.opacity );
             $(overlay).setOpacity(100);
@@ -67,12 +71,14 @@ var PixelPerfect = {
             document.getElementById('pixelperfect-content').style.display = 'none';
         }
 
-        if(this.options.active) {
-            document.getElementById('pixelperfect-overlay').style.display = 'block';
-            this.refreshOverlay();
-        } else {
-            document.getElementById('pixelperfect-overlay').style.display = 'none';
-            $('body > .pixelperfect-wrapper').setOpacity(100);
+        if(document.getElementById('pixelperfect-overlay')) {
+            if(this.options.active) {
+                document.getElementById('pixelperfect-overlay').style.display = 'block';
+                this.refreshOverlay();
+            } else {
+                document.getElementById('pixelperfect-overlay').style.display = 'none';
+                $('body > .pixelperfect-wrapper').setOpacity(100);
+            }
         }
 
         // TODO: add hidden support, when keyboard shortcuts invoked
@@ -84,6 +90,7 @@ var PixelPerfect = {
     updateOptions: function() {
         document.getElementById('pixelperfect-overlay-' + this.options.overlay).checked = true;
         document.getElementById('pixelperfect-opacity').value = this.options.opacity;
+        document.getElementById('pixelperfect-opacity-range').value = this.options.opacity;
         document.getElementById('pixelperfect-x').value = this.options.position.x;
         document.getElementById('pixelperfect-y').value = this.options.position.y;
     },
@@ -213,6 +220,8 @@ var PixelPerfect = {
 
     initInterfaceEvents: function() {
         $('#pixelperfect-overlay-over, #pixelperfect-overlay-below, #pixelperfect-opacity, #pixelperfect-x, #pixelperfect-y').event('change', function() {
+
+            document.getElementById('pixelperfect-opacity-range').value = document.getElementById('pixelperfect-opacity').value;
             this.applyOptions.call(this);
             this.storeOptions.call(this);
             this.refreshOverlay.call(this);
@@ -262,6 +271,12 @@ var PixelPerfect = {
 
             PixelPerfect.options[option] = ! PixelPerfect.options[option];
 
+            PixelPerfect.refreshInterface();
+        });
+
+        $('#pixelperfect-opacity-range').event('change', function() {
+            document.getElementById('pixelperfect-opacity').value = this.elements[0].value;
+            PixelPerfect.applyOptions();
             PixelPerfect.refreshInterface();
         });
     },

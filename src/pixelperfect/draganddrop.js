@@ -39,7 +39,7 @@ DragAndDrop = {
                 document.currentDragged = this;
                 document.currentDragged.mouseDiffX = e.pageX - this.offsetLeft;
                 document.currentDragged.mouseDiffY = e.pageY - this.offsetTop;
-                this.options.onDrag.call(this);
+                this.options.onDrag.call(this, e);
             }.bind( collection.elements[e] ) );
 
         }
@@ -47,12 +47,12 @@ DragAndDrop = {
 
     init: function() {
         var draganddrop, element, pos;
-        document.addEventListener( 'mouseup', function() {
+        document.addEventListener( 'mouseup', function(e) {
             if(this.currentDragged) {
                 if(this.currentDragged.options.remember) {
                     localStorage.setItem('pixelperfect:draganddrop:' + this.currentDragged.getAttribute('id'), parseInt(this.currentDragged.style.left, 10).toString() + ',' + parseInt(this.currentDragged.style.top, 10).toString());
                 }
-                this.currentDragged.options.onDrop.call(this.currentDragged);
+                this.currentDragged.options.onDrop.call(this.currentDragged, e);
             }
             this.currentDragged = false;
         } );
@@ -63,7 +63,7 @@ DragAndDrop = {
                 this.currentDragged.style.bottom = 'auto';
                 this.currentDragged.style.left = (e.pageX - this.currentDragged.mouseDiffX).toString() + 'px';
                 this.currentDragged.style.top = (e.pageY - this.currentDragged.mouseDiffY).toString() + 'px';
-                this.currentDragged.options.onMove.call(this.currentDragged);
+                this.currentDragged.options.onMove.call(this.currentDragged, e);
             }
 
         });

@@ -8,6 +8,12 @@
 var Collection = function(selector, parentElement, caching) {
     var elements, results, l_results, i;
 
+    if(!selector) {
+        this.elements = [];
+        this.elements_length = 0;
+        return this;
+    }
+
     if(selector.nodeName) {
         this.elements = [selector];
         this.elements_length = 1;
@@ -64,6 +70,10 @@ Collection.prototype = {
 
         this.elements.every(function(element) {
             element.addEventListener(name, callback.bind( new Collection(element) ) );
+            if(element.events === undefined) {
+                element.events = {};
+            }
+            element.events[name] = callback;
             return true;
         });
 

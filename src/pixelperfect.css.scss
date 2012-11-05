@@ -57,7 +57,6 @@ $selected: #edeff4;
   .pixelperfect-button {
     width: 20px;
     height: 20px;
-    background: #b6b6b6 url(data:image/gif;base64,R0lGODdhAQAUAIQUAKKioqWlpaenp6qqqqysrK+vr7GxsbS0tLa2trm5ubu7u76+vsDAwMPDw8XFxcjIyMrKys3Nzc/Pz9LS0v///////////////////////////////////////////////ywAAAAAAQAUAAAFEeAkRdDjNMyiJMhhFMQgBEAIADs=) repeat-x center center;
     display: block;
     float: right;
     margin-left: 4px;
@@ -75,6 +74,11 @@ $selected: #edeff4;
     &:hover {
       opacity: 0.8;
     }
+  }
+
+  .pixelperfect-button,
+  .pixelperfect-range {
+    background: #b6b6b6 url(data:image/gif;base64,R0lGODdhAQAUAIQUAKKioqWlpaenp6qqqqysrK+vr7GxsbS0tLa2trm5ubu7u76+vsDAwMPDw8XFxcjIyMrKys3Nzc/Pz9LS0v///////////////////////////////////////////////ywAAAAAAQAUAAAFEeAkRdDjNMyiJMhhFMQgBEAIADs=) repeat-x center center;
   }
 
 
@@ -100,6 +104,37 @@ $selected: #edeff4;
 
   #pixelperfect-horizontal-left {
     margin-left: 0;
+  }
+
+  #pixelperfect-opacity-range {
+    width: 90px;
+    height: 20px;
+    vertical-align: middle;
+    margin-left: 5px;
+
+    &.pixelperfect-range {
+      height: 6px;
+      position: relative;
+      margin: 7px inherit;
+      display: inline-block;
+    }
+
+    &.pixelperfect-range .pixelperfect-slider {
+      display: block;
+      width: 14px;
+      height: 14px;
+      -moz-border-radus: 7px;
+      -webkit-border-radius: 7px;
+      -o-border-radius: 7px;
+      -ms-border-radius: 7px;
+      border-radius: 7px;
+      background: #ccc;
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      margin-left: -7px;
+      cursor: move;
+    }
   }
 
   #pixelperfect-content {
