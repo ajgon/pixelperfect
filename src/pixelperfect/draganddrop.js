@@ -5,25 +5,41 @@ DragAndDrop = {
     /**
      * Makes specified collection elements draggable
      * @param {Collection} collection
-     * @param {Collection} [handler] Handler element which will be used to trigger drag. If not provided, whole element will be used
+     * @param {Object} options
      */
-    makeDraggable: function( collection, handler ) {
+    makeDraggable: function( collection, options ) {
         var e;
 
+        if( options === undefined) {
+            options = {};
+        }
+
+        options = {
+            handler: (options.handler === undefined ? false : options.handler),
+            remember: (options.remember === undefined ? true : options.remember),
+            onDrag: (options.onDrag === undefined ? function() {} : options.onDrag),
+            onDrop: (options.onDrop === undefined ? function() {} : options.onDrop),
+            onMove: (options.onMove === undefined ? function() {} : options.onMove)
+        };
+
         for(e = 0; e < collection.elements_length; e++) {
-            if( handler === undefined ) {
-                handler = collection.elements[e];
+            if( !options.handler ) {
+                options.handler = collection.elements[e];
             } else {
-                handler = collection.elements[e].querySelector( handler );
-                if( !handler ) {
-                    handler = collection.elements[e];
+                options.handler = collection.elements[e].querySelector( options.handler );
+                if( !options.handler ) {
+                    options.handler = collection.elements[e];
                 }
             }
 
-            handler.addEventListener( 'mousedown', function(e) {
+            collection.elements[e].options = options;
+
+            options.handler.addEventListener( 'mousedown', function(e) {
+                e.preventDefault();
                 document.currentDragged = this;
                 document.currentDragged.mouseDiffX = e.pageX - this.offsetLeft;
                 document.currentDragged.mouseDiffY = e.pageY - this.offsetTop;
+                this.options.onDrag.call(this);
             }.bind( collection.elements[e] ) );
 
         }
@@ -33,7 +49,10 @@ DragAndDrop = {
         var draganddrop, element, pos;
         document.addEventListener( 'mouseup', function() {
             if(this.currentDragged) {
-                localStorage.setItem('pixelperfect:draganddrop:' + this.currentDragged.getAttribute('id'), parseInt(this.currentDragged.style.left, 10).toString() + ',' + parseInt(this.currentDragged.style.top, 10).toString());
+                if(this.currentDragged.options.remember) {
+                    localStorage.setItem('pixelperfect:draganddrop:' + this.currentDragged.getAttribute('id'), parseInt(this.currentDragged.style.left, 10).toString() + ',' + parseInt(this.currentDragged.style.top, 10).toString());
+                }
+                this.currentDragged.options.onDrop.call(this.currentDragged);
             }
             this.currentDragged = false;
         } );
@@ -44,6 +63,7 @@ DragAndDrop = {
                 this.currentDragged.style.bottom = 'auto';
                 this.currentDragged.style.left = (e.pageX - this.currentDragged.mouseDiffX).toString() + 'px';
                 this.currentDragged.style.top = (e.pageY - this.currentDragged.mouseDiffY).toString() + 'px';
+                this.currentDragged.options.onMove.call(this.currentDragged);
             }
 
         });

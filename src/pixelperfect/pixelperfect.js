@@ -10,6 +10,7 @@ var PixelPerfect = {
         },
         minimized: false,
         hidden: false,
+        active: true
     },
     options: {
         overlay: false,
@@ -17,7 +18,8 @@ var PixelPerfect = {
         position: false,
         align: false,
         minimized: false,
-        hidden: false
+        hidden: false,
+        active: false
     },
     layers: [],
     wrapper: null,
@@ -31,22 +33,52 @@ var PixelPerfect = {
             overlay.src = localStorage.getItem(layer_id);
             overlay.setAttribute('id', 'pixelperfect-overlay');
             document.body.appendChild(overlay);
+            DragAndDrop.makeDraggable( $(overlay), {
+                remember: false,
+                onDrop: function() {
+                    PixelPerfect.options.position.x = parseInt(this.style.left, 10);
+                    PixelPerfect.options.position.y = parseInt(this.style.top, 10);
+                    PixelPerfect.refreshInterface.call(PixelPerfect);
+                }
+            } );
         } else {
             overlay = document.getElementById('pixelperfect-overlay');
         }
 
         if( this.options.overlay == 'below' ) {
             $(this.wrapper).setOpacity( this.options.opacity );
+            $(overlay).setOpacity(100);
             overlay.style.zIndex = '-2147483646';
         } else {
+            $(this.wrapper).setOpacity(100);
             $(overlay).setOpacity( this.options.opacity );
             overlay.style.zIndex = '2147483646';
         }
 
-        // TODO Don't forget to bring the towel... errr... align!
         overlay.style.left = this.options.position.x + 'px';
         overlay.style.top = this.options.position.y + 'px';
         this.updateOptions();
+    },
+
+    refreshInterface: function() {
+        if(this.options.minimized) {
+            document.getElementById('pixelperfect-content').style.display = 'block';
+        } else {
+            document.getElementById('pixelperfect-content').style.display = 'none';
+        }
+
+        if(this.options.active) {
+            document.getElementById('pixelperfect-overlay').style.display = 'block';
+            this.refreshOverlay();
+        } else {
+            document.getElementById('pixelperfect-overlay').style.display = 'none';
+            $('body > .pixelperfect-wrapper').setOpacity(100);
+        }
+
+        // TODO: add hidden support, when keyboard shortcuts invoked
+
+        this.updateOptions();
+        this.storeOptions();
     },
 
     updateOptions: function() {
@@ -54,6 +86,27 @@ var PixelPerfect = {
         document.getElementById('pixelperfect-opacity').value = this.options.opacity;
         document.getElementById('pixelperfect-x').value = this.options.position.x;
         document.getElementById('pixelperfect-y').value = this.options.position.y;
+    },
+
+    applyOptions: function() {
+        this.options.overlay = document.getElementById('pixelperfect-overlay-over').checked ? 'over' : 'below';
+        this.options.opacity = document.getElementById('pixelperfect-opacity').value;
+        this.options.position.x = (parseInt(document.getElementById('pixelperfect-x').value, 10) || 0).toString();
+        this.options.position.y = (parseInt(document.getElementById('pixelperfect-y').value, 10) || 0).toString();
+    },
+
+    storeOptions: function() {
+        var option;
+
+        for( option in this.options ) {
+            if( this.options.hasOwnProperty(option) ) {
+                if(option == 'position') {
+                    localStorage.setItem('pixelperfect:options:' + option, this.options[option].x + ',' + this.options[option].y);
+                } else {
+                    localStorage.setItem('pixelperfect:options:' + option, this.options[option]);
+                }
+            }
+        }
     },
 
     setDefaults: function() {
@@ -80,6 +133,8 @@ var PixelPerfect = {
                     this.options[option] = {};
                     this.options[option].x = pos[0];
                     this.options[option].y = pos[1];
+                } else if(option == 'active' || option == 'minimized' || option == 'hidden') {
+                    this.options[option] = (localStorage.getItem('pixelperfect:options:' + option) === 'true');
                 } else {
                     this.options[option] = localStorage.getItem('pixelperfect:options:' + option);
                 }
@@ -156,6 +211,61 @@ var PixelPerfect = {
         document.head.appendChild(link);
     },
 
+    initInterfaceEvents: function() {
+        $('#pixelperfect-overlay-over, #pixelperfect-overlay-below, #pixelperfect-opacity, #pixelperfect-x, #pixelperfect-y').event('change', function() {
+            this.applyOptions.call(this);
+            this.storeOptions.call(this);
+            this.refreshOverlay.call(this);
+        }.bind(this));
+        $('#pixelperfect-aligns > .pixelperfect-button').event('click', function(e) {
+            var x = false, y = false,
+                overlay = document.getElementById('pixelperfect-overlay');
+
+            e.preventDefault();
+            switch(this.elements[0].getAttribute('id')) {
+                case 'pixelperfect-horizontal-left':
+                    x = 0;
+                    break;
+                case 'pixelperfect-horizontal-center':
+                    x = Math.round(window.innerWidth / 2.0 - overlay.width / 2.0);
+                    break;
+                case 'pixelperfect-horizontal-right':
+                    x = window.innerWidth - overlay.width;
+                    break;
+                case 'pixelperfect-vertical-top':
+                    y = 0;
+                    break;
+                case 'pixelperfect-vertical-middle':
+                    y = Math.round(window.innerHeight / 2.0 - overlay.height / 2.0);
+                    break;
+                case 'pixelperfect-vertical-bottom':
+                    y = window.innerHeight - overlay.height;
+                    break;
+            }
+
+            if( x !== false ) {
+                document.getElementById('pixelperfect-x').value = x;
+            }
+
+            if( y !== false ) {
+                document.getElementById('pixelperfect-y').value = y;
+            }
+
+            PixelPerfect.applyOptions();
+            PixelPerfect.storeOptions();
+            PixelPerfect.refreshOverlay();
+        });
+
+        $('#pixelperfect-top > .pixelperfect-button').event('click', function(e) {
+            var option = this.elements[0].getAttribute('id').replace('pixelperfect-', '');
+            e.preventDefault();
+
+            PixelPerfect.options[option] = ! PixelPerfect.options[option];
+
+            PixelPerfect.refreshInterface();
+        });
+    },
+
     init: function() {
         this.setDefaults();
         this.initOptions();
@@ -163,11 +273,13 @@ var PixelPerfect = {
         this.initWrapper();
         this.initHTML();
         this.initStyles();
+        this.initInterfaceEvents();
 
         DragAndDrop.init();
-        DragAndDrop.makeDraggable( $('#pixelperfect'), '#pixelperfect-top' );
+        DragAndDrop.makeDraggable( $('#pixelperfect'), {handler: '#pixelperfect-top'} );
         Layers.init();
         this.initFileHandling();
+        this.refreshInterface();
     }
 
 };

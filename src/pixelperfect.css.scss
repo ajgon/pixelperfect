@@ -26,7 +26,7 @@ $selected: #edeff4;
     text-decoration: none;
   }
 
-  > div {
+  #pixelperfect-content > div {
     overflow: hidden;
     height: 20px;
     line-height: 20px;
@@ -102,60 +102,64 @@ $selected: #edeff4;
     margin-left: 0;
   }
 
-  #pixelperfect-addlayer {
-    border-top: 1px solid #dadada;
-    border-bottom: 1px solid #dadada;
-    margin: 0 -10px;
-    padding: 5px 10px;
+  #pixelperfect-content {
 
-    #pixelperfect-file {
-      width: 110px;
+    #pixelperfect-addlayer {
+      border-top: 1px solid #dadada;
+      border-bottom: 1px solid #dadada;
+      margin: 0 -10px;
+      padding: 5px 10px;
+
+      #pixelperfect-file {
+        width: 110px;
+      }
+
+      #pixelperfect-fileinput {
+        display: none;
+      }
+
     }
 
-    #pixelperfect-fileinput {
-      display: none;
+    #pixelperfect-layers {
+      height: auto;
+
+      .pixelperfect-layer {
+        max-height: 120px;
+        padding: 5px 30px 5px 5px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -o-border-radius: 10px;
+        -ms-border-radius: 10px;
+        border-radius: 10px;
+        overflow: auto;
+        position: relative;
+        text-align: center;
+        background: #fff;
+        margin-bottom: 5px;
+      }
+
+      .pixelperfect-layer,
+      .pixelperfect-layer img {
+        max-width: 165px;
+        max-height: 120px;
+        vertical-align: top;
+      }
+
+      .pixelperfect-layer-selected {
+        background: $selected;
+      }
+
+      .pixelperfect-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+
     }
-
-  }
-
-  #pixelperfect-layers {
-    height: auto;
-
-    .pixelperfect-layer {
-      max-height: 120px;
-      padding: 5px 30px 5px 5px;
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-      -o-border-radius: 10px;
-      -ms-border-radius: 10px;
-      border-radius: 10px;
-      overflow: auto;
-      position: relative;
-      text-align: center;
-      background: #fff;
-      margin-bottom: 5px;
-    }
-
-    .pixelperfect-layer,
-    .pixelperfect-layer img {
-      max-width: 165px;
-      max-height: 120px;
-      vertical-align: top;
-    }
-
-    .pixelperfect-layer-selected {
-      background: $selected;
-    }
-
-    .pixelperfect-button {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-    }
-
   }
 }
 
 #pixelperfect-overlay {
   position: absolute;
+  cursor: move;
 }
