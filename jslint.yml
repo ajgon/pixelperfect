@@ -1,0 +1,4 @@
+jslint:
+  paths:
+    - src/pixelperfect/*.js
+    - src/pixelperfect.js

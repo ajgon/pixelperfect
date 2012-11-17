@@ -5,41 +5,47 @@
  * @param {Boolean} [caching] enable/disable internal results cache, don't use with dynamic content!
  * @constructor
  */
-var Collection = function(selector, parentElement, caching) {
+/*jslint browser: true, sloppy: true */
+/*properties
+ addClass, addEventListener, bind, className, elements, elements_length,
+ event, events, every, length, nodeName, opacity, parentNode, prototype, push,
+ querySelectorAll, remove, removeChild, removeClass, replace, setOpacity,
+ style, toString
+ */
+var Collection = function (selector, parentElement, caching) {
     var elements, results, l_results, i;
-
-    if(!selector) {
+    if (!selector) {
         this.elements = [];
         this.elements_length = 0;
         return this;
     }
 
-    if(selector.nodeName) {
+    if (selector.nodeName) {
         this.elements = [selector];
         this.elements_length = 1;
         return this;
     }
 
-    if( typeof(parentElement) === 'boolean' ) {
+    if (typeof (parentElement) === 'boolean') {
         caching = parentElement;
         parentElement = undefined;
     }
 
-    if( caching === undefined ) {
+    if (caching === undefined) {
         caching = true;
         // I'm using aggresive caching, because most of the times pixelperfect won't change
     }
 
-    if(caching && this.elements === null) {
+    if (caching && this.elements === null) {
         elements = [];
-        if(parentElement === undefined) {
+        if (parentElement === undefined) {
             parentElement = document;
         }
 
         results = parentElement.querySelectorAll(selector);
         l_results = results.length;
-        for(i = 0; i < l_results; i++) {
-            elements.push( results[i] );
+        for (i = 0; i < l_results; i += 1) {
+            elements.push(results[i]);
         }
 
         this.elements = elements;
@@ -65,12 +71,10 @@ Collection.prototype = {
      * @param callback Callback function
      * @return this
      */
-    event: function(name, callback) {
-        var e;
-
-        this.elements.every(function(element) {
-            element.addEventListener(name, callback.bind( new Collection(element) ) );
-            if(element.events === undefined) {
+    event: function (name, callback) {
+        this.elements.every(function (element) {
+            element.addEventListener(name, callback.bind(new Collection(element)));
+            if (element.events === undefined) {
                 element.events = {};
             }
             element.events[name] = callback;
@@ -80,8 +84,8 @@ Collection.prototype = {
         return this;
     },
 
-    remove: function() {
-        this.elements.every(function(element) {
+    remove: function () {
+        this.elements.every(function (element) {
             element.parentNode.removeChild(element);
             return true;
         });
@@ -89,18 +93,18 @@ Collection.prototype = {
         return this;
     },
 
-    removeClass: function( name ) {
-        this.elements.every(function(element) {
-            element.className = element.className.replace(RegExp(name, 'g'), '').replace(/^\s+|\s+$/, '');
+    removeClass: function (name) {
+        this.elements.every(function (element) {
+            element.className = element.className.replace(new RegExp(name, 'g'), '').replace(/^\s+|\s+$/, '');
             return true;
         }.bind(this));
 
         return this;
     },
 
-    addClass: function( name ) {
+    addClass: function (name) {
         this.removeClass(name);
-        this.elements.every(function(element) {
+        this.elements.every(function (element) {
             element.className += ' ' + name;
             return true;
         }.bind(this));
@@ -108,14 +112,13 @@ Collection.prototype = {
         return this;
     },
 
-    setOpacity: function( value ) {
-        this.elements.every(function(element) {
+    setOpacity: function (value) {
+        this.elements.every(function (element) {
             element.style.opacity = (parseInt(value, 10) / 100.0).toString();
             return true;
         }.bind(this));
 
         return this;
-    },
-
+    }
 
 };

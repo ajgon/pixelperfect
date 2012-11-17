@@ -1,22 +1,33 @@
+/*jslint browser: true, sloppy: true */
+/*global $, DragAndDrop */
+/*properties
+ URL, appendChild, bind, call, change, className, clientWidth, createElement,
+ elements, event, events, firstChild, getElementById, hasOwnProperty,
+ insertBefore, left, makeDraggable, match, max, min, offsetLeft, onMove,
+ pageX, parentNode, postLoad, post_opacityRange, preLoad, pre_windowURL,
+ preventDefault, remember, removeChild, round, setAttribute, stopPropagation,
+ style, toString, top, type, value, webkitURL
+ */
 var Hacks = {
     // http://caniuse.com/bloburls
-    pre_windowURL: function() {
-        if(!window.URL) {
-            if(!window.webkitURL) {
+    pre_windowURL: function () {
+        if (!window.URL) {
+            if (!window.webkitURL) {
+                window.URL = false;
                 // Opera and IE
-                // Todo let's figure something out later
+                // let's figure something out later
             } else {
                 window.URL = window.webkitURL;
             }
         }
     },
     // http://caniuse.com/input-range
-    post_opacityRange: function() {
-        var range = document.createElement('input'),
-            originalRange, slider, adjustSlider;
+    post_opacityRange: function () {
+        var range = document.createElement('input'), originalRange,
+            slider, adjustSlider;
 
         range.setAttribute('type', 'range');
-        if(range.type !== 'range') {
+        if (range.type !== 'range') {
             originalRange = document.getElementById('pixelperfect-opacity-range');
             range = document.createElement('span');
             slider = document.createElement('span');
@@ -31,7 +42,7 @@ var Hacks = {
             originalRange.parentNode.removeChild(originalRange);
             range.setAttribute('id', 'pixelperfect-opacity-range');
 
-            adjustSlider = function(e) {
+            adjustSlider = function (e) {
                 var range = document.getElementById('pixelperfect-opacity-range'),
                     container = document.getElementById('pixelperfect');
                 e.preventDefault();
@@ -52,25 +63,25 @@ var Hacks = {
                 onMove: adjustSlider
             });
 
-            setInterval(function() {
+            setInterval(function () {
                 this.firstChild.style.left = this.value + '%';
             }.bind(document.getElementById('pixelperfect-opacity-range')), 50);
         }
     },
-    preLoad: function() {
+    preLoad: function () {
         var hack;
 
-        for(hack in this) {
-            if(hack != 'preLoad' && hack.match(/^pre_/) && this.hasOwnProperty(hack)) {
+        for (hack in this) {
+            if (this.hasOwnProperty(hack) && hack !== 'preLoad' && hack.match(/^pre_/)) {
                 this[hack]();
             }
         }
     },
-    postLoad: function() {
+    postLoad: function () {
         var hack;
 
-        for(hack in this) {
-            if(hack != 'postLoad' && hack.match(/^post_/) && this.hasOwnProperty(hack)) {
+        for (hack in this) {
+            if (this.hasOwnProperty(hack) && hack !== 'postLoad' && hack.match(/^post_/)) {
                 this[hack]();
             }
         }

@@ -13,5 +13,6 @@
 * nice example page
 * project page
 * mobile version
-* jslint tested
+* ~~jslint tested~~
 * browser snippet
+* document code
