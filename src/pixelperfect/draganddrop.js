@@ -44,7 +44,31 @@ DragAndDrop = {
 
         }
     },
-
+    catchFile: function(collection) {
+        var e, ev, events = ['dragenter', 'dragexit', 'dragover'];
+        for(e = 0; e < collection.elements_length; e++) {
+            for(ev = 0; ev < 3; ev++) {
+                collection.elements[e].addEventListener(events[ev], function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if(e.type == 'dragover') {
+                        e.target.className = e.type;
+                    } else {
+                        e.target.className = '';
+                    }
+                }, false);
+            }
+            collection.elements[e].addEventListener('drop', function(e) {
+                var f, files = e.dataTransfer.files, files_length = files.length;
+                e.stopPropagation();
+                e.preventDefault();
+                e.target.className = '';
+                for(f = 0; f < files_length; f++) {
+                    Layers.insertLayer(window.URL.createObjectURL(files[f]));
+                }
+            }, false);
+        }
+    },
     init: function() {
         var draganddrop, element, pos;
         document.addEventListener( 'mouseup', function(e) {

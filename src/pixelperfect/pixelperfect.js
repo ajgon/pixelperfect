@@ -65,6 +65,8 @@ var PixelPerfect = {
     },
 
     refreshInterface: function() {
+        var maxHeight, layers = $('#pixelperfect #pixelperfect-layers').elements[0],
+            layerHeight;
         if(this.options.minimized) {
             document.getElementById('pixelperfect-content').style.display = 'block';
         } else {
@@ -85,6 +87,12 @@ var PixelPerfect = {
 
         this.updateOptions();
         this.storeOptions();
+
+        setTimeout(function() {
+            layerHeight = $('#pixelperfect #pixelperfect-drop-file').elements[0].clientHeight;
+            maxHeight = window.innerHeight - document.getElementById('pixelperfect').clientHeight - 40 + layers.clientHeight;
+            layers.style.maxHeight = Math.max(layerHeight, maxHeight).toString() + 'px';
+        }, 40);
     },
 
     updateOptions: function() {
@@ -157,6 +165,11 @@ var PixelPerfect = {
         $('#pixelperfect-fileinput').event('change', function(e) {
             Layers.insertLayer(window.URL.createObjectURL(e.target.files[0]));
         }.bind(this));
+        $('#pixelperfect-file').event('keypress', function(e) {
+            if(e.keyCode === 13 || e.charCode === 13) {
+                Layers.insertLayer(this.elements[0].value);
+            }
+        });
     },
 
     initWrapper: function() {
@@ -173,7 +186,7 @@ var PixelPerfect = {
         }
 
         for(el in body_css) {
-            if(!el.match(/^[0-9]/) && wrapper_css[el] != body_css[el]) {
+            if(!el.match(/^[0-9]/) && el.match(/^background/) && wrapper_css[el] != body_css[el]) {
                 tmp = wrapper_css[el];
                 wrapper.style[el] = body_css[el];
                 document.body.style[el] = tmp;
@@ -292,6 +305,7 @@ var PixelPerfect = {
 
         DragAndDrop.init();
         DragAndDrop.makeDraggable( $('#pixelperfect'), {handler: '#pixelperfect-top'} );
+        DragAndDrop.catchFile( $('#pixelperfect-drop-file') );
         Layers.init();
         this.initFileHandling();
         this.refreshInterface();

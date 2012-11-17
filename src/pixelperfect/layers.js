@@ -11,17 +11,23 @@ var Layers = {
         div_layer.appendChild(img);
         div_layer.appendChild(a_remove);
 
-        if( src.match(/^blob:/) ) {
+        if( src.match(/(^blob:)|(^http)/) ) {
             img.onload = function() {
                 var blob, layer_id;
-                blob = img.src.replace('blob:', '');
-                layer_id = 'pixelperfect:layer:' + blob;
+                blob = img.src.replace(/^blob:/, '');
+                layer_id = 'pixelperfect:layer:' + blob.replace(/[^a-zA-Z0-9]+/g, '');
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
-                localStorage.setItem(layer_id, canvas.toDataURL('image/jpeg'));
+                try {
+                    localStorage.setItem(layer_id, canvas.toDataURL('image/jpeg'));
+                } catch(e) {
+                    localStorage.setItem(layer_id, src);
+                }
                 div_layer.setAttribute('data-id', layer_id);
-                URL.revokeObjectURL(blob);
+                if(src.match(/^blob:/)) {
+                    URL.revokeObjectURL(blob);
+                }
                 this.appendLayer(div_layer);
                 this.selectLayer( this.fillSelected() );
             }.bind(this);
@@ -39,16 +45,15 @@ var Layers = {
         $('#pixelperfect-layers').elements[0].appendChild(layer_container);
     },
     selectLayer: function( layer_id ) {
-        var img,
-            selected_layer = localStorage.getItem('pixelperfect:selected');
-
-        if(layer_id == selected_layer) {
+        var selected_layer = localStorage.getItem('pixelperfect:selected');
+        /*if(layer_id == selected_layer) {
             return;
-        }
+        } */
 
         if( layer_id === undefined ) {
             layer_id = this.fillSelected();
         }
+
         if(layer_id) {
             $('#pixelperfect-layers .pixelperfect-layer').removeClass('pixelperfect-layer-selected');
             $('#pixelperfect-layers .pixelperfect-layer[data-id="' + layer_id + '"]').addClass('pixelperfect-layer-selected');
@@ -60,6 +65,9 @@ var Layers = {
         $('#pixelperfect-layers .pixelperfect-layer[data-id="' + layer_id + '"]').remove();
         localStorage.removeItem( layer_id );
         this.selectLayer( this.fillSelected() );
+        if($('#pixelperfect-layers .pixelperfect-layer').elements_length == 0) {
+            $('#pixelperfect-overlay').remove();
+        }
     },
     fillSelected: function() {
         var layer,

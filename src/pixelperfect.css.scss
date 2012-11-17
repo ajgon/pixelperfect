@@ -24,6 +24,25 @@ $selected: #edeff4;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     text-decoration: none;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+
+  label {
+    display: inline;
+  }
+
+  input {
+    width: auto;
+    height: auto;
+    background: none;
+    border: none;
+    display: inline-block;
+  }
+
+  input[type="radio"] {
+    margin: 3px 3px 0 5px;
   }
 
   #pixelperfect-content > div {
@@ -52,6 +71,9 @@ $selected: #edeff4;
     -o-border-radius: 3px;
     -ms-border-radius: 3px;
     border-radius: 3px;
+    background: #fff;
+    color: #333;
+    padding: 2px;
   }
 
   .pixelperfect-button {
@@ -157,6 +179,7 @@ $selected: #edeff4;
 
     #pixelperfect-layers {
       height: auto;
+      overflow: auto;
 
       .pixelperfect-layer {
         max-height: 120px;
@@ -191,6 +214,29 @@ $selected: #edeff4;
       }
 
     }
+
+    #pixelperfect-drop-file {
+      width: 194px;
+      height: 124px;
+      border: 3px dashed $selected;
+      line-height: 114px;
+      text-align: center;
+      color: #999;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      -o-border-radius: 10px;
+      -ms-border-radius: 10px;
+      border-radius: 10px;
+    }
+
+    #pixelperfect-drop-file.dragover {
+      background: #fdfd96;
+    }
+
+    #pixelperfect-drop-file span {
+      font-size: 18px;
+    }
+
   }
 }
 
