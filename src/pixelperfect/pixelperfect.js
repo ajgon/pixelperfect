@@ -68,9 +68,15 @@ var PixelPerfect = {
         var maxHeight, layers = $('#pixelperfect #pixelperfect-layers').elements[0],
             layerHeight;
         if(this.options.minimized) {
-            document.getElementById('pixelperfect-content').style.display = 'block';
-        } else {
             document.getElementById('pixelperfect-content').style.display = 'none';
+        } else {
+            document.getElementById('pixelperfect-content').style.display = 'block';
+        }
+
+        if(this.options.hidden) {
+            document.getElementById('pixelperfect').style.display = 'none';
+        } else {
+            document.getElementById('pixelperfect').style.display = 'block';
         }
 
         if(document.getElementById('pixelperfect-overlay')) {
@@ -83,8 +89,6 @@ var PixelPerfect = {
             }
         }
 
-        // TODO: add hidden support, when keyboard shortcuts invoked
-
         this.updateOptions();
         this.storeOptions();
 
@@ -92,7 +96,14 @@ var PixelPerfect = {
             layerHeight = $('#pixelperfect #pixelperfect-drop-file').elements[0].clientHeight;
             maxHeight = window.innerHeight - document.getElementById('pixelperfect').clientHeight - 40 + layers.clientHeight;
             layers.style.maxHeight = Math.max(layerHeight, maxHeight).toString() + 'px';
+            PixelPerfect.refreshInterface();
         }, 40);
+    },
+
+    refreshOptions: function() {
+        PixelPerfect.applyOptions();
+        PixelPerfect.storeOptions();
+        PixelPerfect.refreshOverlay();
     },
 
     updateOptions: function() {
@@ -136,6 +147,42 @@ var PixelPerfect = {
                 }
             }
         }
+    },
+
+    align: function(where) {
+        var x = false, y = false,
+            overlay = document.getElementById('pixelperfect-overlay');
+
+        switch(where) {
+            case 'left':
+                x = 0;
+                break;
+            case 'center':
+                x = Math.round(window.innerWidth / 2.0 - overlay.width / 2.0);
+                break;
+            case 'right':
+                x = window.innerWidth - overlay.width;
+                break;
+            case 'top':
+                y = 0;
+                break;
+            case 'middle':
+                y = Math.round(window.innerHeight / 2.0 - overlay.height / 2.0);
+                break;
+            case 'bottom':
+                y = window.innerHeight - overlay.height;
+                break;
+        }
+
+        if( x !== false ) {
+            document.getElementById('pixelperfect-x').value = x;
+        }
+
+        if( y !== false ) {
+            document.getElementById('pixelperfect-y').value = y;
+        }
+
+        PixelPerfect.refreshOptions();
     },
 
     initOptions: function() {
@@ -240,42 +287,9 @@ var PixelPerfect = {
             this.refreshOverlay.call(this);
         }.bind(this));
         $('#pixelperfect-aligns > .pixelperfect-button').event('click', function(e) {
-            var x = false, y = false,
-                overlay = document.getElementById('pixelperfect-overlay');
-
             e.preventDefault();
-            switch(this.elements[0].getAttribute('id')) {
-                case 'pixelperfect-horizontal-left':
-                    x = 0;
-                    break;
-                case 'pixelperfect-horizontal-center':
-                    x = Math.round(window.innerWidth / 2.0 - overlay.width / 2.0);
-                    break;
-                case 'pixelperfect-horizontal-right':
-                    x = window.innerWidth - overlay.width;
-                    break;
-                case 'pixelperfect-vertical-top':
-                    y = 0;
-                    break;
-                case 'pixelperfect-vertical-middle':
-                    y = Math.round(window.innerHeight / 2.0 - overlay.height / 2.0);
-                    break;
-                case 'pixelperfect-vertical-bottom':
-                    y = window.innerHeight - overlay.height;
-                    break;
-            }
 
-            if( x !== false ) {
-                document.getElementById('pixelperfect-x').value = x;
-            }
-
-            if( y !== false ) {
-                document.getElementById('pixelperfect-y').value = y;
-            }
-
-            PixelPerfect.applyOptions();
-            PixelPerfect.storeOptions();
-            PixelPerfect.refreshOverlay();
+            PixelPerfect.align(this.elements[0].getAttribute('id').replace(/pixelperfect-[a-z]+-/, ''));
         });
 
         $('#pixelperfect-top > .pixelperfect-button').event('click', function(e) {
@@ -293,6 +307,138 @@ var PixelPerfect = {
             PixelPerfect.refreshInterface();
         });
     },
+    initKeyEvents: function() {
+        var overlayMode = false, positionMode = false, alignMode = false, fileMode = false;
+        $('#pixelperfect-opacity, #pixelperfect-x, #pixelperfect-y').event('keypress', function(e) {
+            if(alignMode || overlayMode || positionMode || fileMode) {
+                e.preventDefault();
+                return;
+            }
+            var newValue = parseInt(this.elements[0].value, 10);
+            if(e.keyCode == 38 || e.keyCode == 40) {
+                newValue = newValue + (e.keyCode === 38 ? 1 : -1);
+            }
+            if(this.elements[0].getAttribute('data-max')) {
+                newValue = Math.min(parseInt(this.elements[0].getAttribute('data-max'), 10), newValue);
+            }
+            if(this.elements[0].getAttribute('data-min')) {
+                newValue = Math.max(parseInt(this.elements[0].getAttribute('data-min'), 10), newValue);
+            }
+            this.elements[0].value = newValue;
+            PixelPerfect.refreshOptions();
+        });
+
+        $(document).event('keypress', function(e) {
+            var overlayRadio = false, option;
+            // overlay
+            // over [ O ]
+            if(overlayMode && !e.ctrlKey && e.charCode == 111) {
+                overlayRadio = document.getElementById('pixelperfect-overlay-over');
+            }
+            // below [ B ]
+            if(overlayMode && !e.ctrlKey && e.charCode == 98) {
+                overlayRadio = document.getElementById('pixelperfect-overlay-below');
+            }
+            if(overlayRadio) {
+                overlayRadio.setAttribute('checked', 'checked');
+                overlayRadio.checked = true;
+            }
+            overlayMode = (e.ctrlKey && e.charCode == 111);
+
+            // position
+            // x [ X ]
+            if(positionMode && !e.ctrlKey && e.charCode == 120) {
+                document.getElementById('pixelperfect-x').focus();
+            }
+            // y [ Y ]
+            if(positionMode && !e.ctrlKey && e.charCode == 121) {
+                document.getElementById('pixelperfect-y').focus();
+            }
+            positionMode = (e.ctrlKey && e.charCode == 112);
+
+            // align
+            // left [ L ]
+            if(alignMode && !e.ctrlKey && e.charCode == 108) {
+                PixelPerfect.align('left');
+            }
+            // center [ C ]
+            if(alignMode && !e.ctrlKey && e.charCode == 99) {
+                PixelPerfect.align('center');
+            }
+            // right [ R ]
+            if(alignMode && !e.ctrlKey && e.charCode == 114) {
+                PixelPerfect.align('right');
+            }
+            // top [ T ]
+            if(alignMode && !e.ctrlKey && e.charCode == 116) {
+                PixelPerfect.align('top');
+            }
+            // middle [ M ]
+            if(alignMode && !e.ctrlKey && e.charCode == 109) {
+                PixelPerfect.align('middle');
+            }
+            // bottom [ B ]
+            if(alignMode && !e.ctrlKey && e.charCode == 98) {
+                PixelPerfect.align('bottom');
+            }
+            alignMode = (e.ctrlKey && e.charCode == 97);
+
+            // file
+            // upload [ F ]
+            if(fileMode && !e.ctrlKey && e.charCode == 102) {
+                document.getElementById('pixelperfect-fileinput').click();
+            }
+            // URL [ U ]
+            if(fileMode && !e.ctrlKey && e.charCode == 117) {
+                document.getElementById('pixelperfect-file').focus();
+            }
+            fileMode = (e.ctrlKey && e.charCode == 102);
+
+            // layer
+            // number [ 1-9,0 ]
+            if(e.ctrlKey && e.charCode >= 48 && e.charCode <= 57) {
+                Layers.setByIndex(e.charCode == 48 ? 9 : e.charCode - 49);
+            }
+            // next [ ] ]
+            if(e.ctrlKey && e.charCode == 29) {
+                Layers.next();
+            }
+            // prev [ [ ]
+            if(e.ctrlKey && e.charCode == 27) {
+                Layers.previous();
+            }
+            // remove [ R ]
+            if(e.ctrlKey && e.charCode == 114) {
+                Layers.removeLayer(Layers.fillSelected());
+            }
+
+            // opacity [ T ]
+            if(e.ctrlKey && e.charCode == 116) {
+                document.getElementById('pixelperfect-opacity').focus();
+            }
+
+            // hide [ H ]
+            // minimize [ M ]
+            // on/off [ X ]
+            if(e.ctrlKey && (e.charCode == 104 || e.charCode == 109 || e.charCode == 120)) {
+                switch(e.charCode) {
+                    case 104:
+                        option = 'hidden';
+                        break;
+                    case 109:
+                        option = 'minimized';
+                        break;
+                    case 120:
+                        option = 'active';
+                        break;
+                }
+                PixelPerfect.options[option] = ! PixelPerfect.options[option];
+                PixelPerfect.refreshInterface();
+            }
+
+            PixelPerfect.refreshOptions();
+        });
+    },
 
     init: function() {
         this.setDefaults();
@@ -302,6 +448,7 @@ var PixelPerfect = {
         this.initHTML();
         this.initStyles();
         this.initInterfaceEvents();
+        this.initKeyEvents();
 
         DragAndDrop.init();
         DragAndDrop.makeDraggable( $('#pixelperfect'), {handler: '#pixelperfect-top'} );

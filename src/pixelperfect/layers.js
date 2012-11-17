@@ -84,6 +84,27 @@ var Layers = {
 
         return selected;
     },
+    getSelected: function() {
+        return $('#pixelperfect-layers .pixelperfect-layer-selected, #pixelperfect-layers .pixelperfect-layer[data-id="' + this.fillSelected() + '"]').elements[0];
+    },
+    next: function() {
+        var selectedLayer = this.getSelected();
+        if(selectedLayer && selectedLayer.nextSibling) {
+            this.selectLayer(selectedLayer.nextSibling.getAttribute('data-id'));
+        }
+    },
+    previous: function() {
+        var selectedLayer = this.getSelected();
+        if(selectedLayer && selectedLayer.previousSibling) {
+            this.selectLayer(selectedLayer.previousSibling.getAttribute('data-id'));
+        }
+    },
+    setByIndex: function(index) {
+        var selectedLayer = $('#pixelperfect-layers .pixelperfect-layer').elements[index];
+        if(selectedLayer) {
+            this.selectLayer(selectedLayer.getAttribute('data-id'));
+        }
+    },
     refresh: function() {
         var layer;
 
