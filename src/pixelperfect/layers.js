@@ -1,15 +1,30 @@
 /*jslint browser: true, sloppy: true */
 /*global $, PixelPerfect */
 /*properties
- URL, addClass, appendChild, appendLayer, bind, call, className,
+ URL, addClass, addToList, appendChild, appendLayer, bind, call, className,
  createElement, drawImage, elements, elements_length, event, fillSelected,
- getAttribute, getContext, getItem, getSelected, hasOwnProperty, height, init,
- innerHTML, insertLayer, join, match, next, nextSibling, onload, parentNode,
- preventDefault, previous, previousSibling, refresh, refreshOverlay, remove,
- removeClass, removeItem, removeLayer, replace, revokeObjectURL, selectLayer,
- setAttribute, setByIndex, setItem, src, target, toDataURL, width
+ getAttribute, getContext, getItem, getSelected, hasOwnProperty, height,
+ indexOf, init, innerHTML, insertLayer, join, length, list, match, next,
+ nextSibling, onload, parentNode, preventDefault, previous, previousSibling,
+ push, refresh, refreshOverlay, remove, removeClass, removeFromList,
+ removeItem, removeLayer, replace, revokeObjectURL, selectLayer, setAttribute,
+ setByIndex, setItem, splice, split, src, target, toDataURL, width
  */
 var Layers = {
+    list: [],
+    addToList: function (layer_id) {
+        if (this.list.indexOf(layer_id) === -1) {
+            this.list.push(layer_id);
+        }
+        localStorage.setItem('pixelperfect:list', this.list.join(','));
+    },
+    removeFromList: function (layer_id) {
+        var listPos = this.list.indexOf(layer_id);
+        if (listPos !== -1) {
+            this.list.splice(listPos, 1);
+        }
+        localStorage.setItem('pixelperfect:list', this.list.join(','));
+    },
     insertLayer: function (src, layer_id) {
         var div_layer = document.createElement('div'),
             a_remove = document.createElement('a'),
@@ -41,10 +56,12 @@ var Layers = {
                 }
                 this.appendLayer(div_layer);
                 this.selectLayer(this.fillSelected());
+                this.addToList(layer_id);
             }.bind(this);
         } else {
             if (layer_id !== undefined) {
                 div_layer.setAttribute('data-id', layer_id);
+                this.addToList(layer_id);
             }
             this.appendLayer(div_layer);
             this.selectLayer(this.fillSelected());
@@ -75,6 +92,7 @@ var Layers = {
     removeLayer: function (layer_id) {
         $('#pixelperfect-layers .pixelperfect-layer[data-id="' + layer_id + '"]').remove();
         localStorage.removeItem(layer_id);
+        this.removeFromList(layer_id);
         this.selectLayer(this.fillSelected());
         if ($('#pixelperfect-layers .pixelperfect-layer').elements_length === 0) {
             $('#pixelperfect-overlay').remove();
@@ -117,17 +135,21 @@ var Layers = {
         }
     },
     refresh: function () {
-        var layer;
+        var l, listLength = this.list.length;
 
         $('#pixelperfect-layers .pixelperfect-layer').remove();
-        for (layer in localStorage) {
-            if (localStorage.hasOwnProperty(layer) && layer.match(/^pixelperfect:layer/)) {
-                this.insertLayer(localStorage.getItem(layer), layer);
+        for (l = 0; l < listLength; l += 1) {
+            if (this.list[l].match(/^pixelperfect:layer/)) {
+                this.insertLayer(localStorage.getItem(this.list[l]), this.list[l]);
             }
         }
         this.selectLayer();
     },
     init: function () {
+        var lsList = localStorage.getItem('pixelperfect:list');
+        if (lsList) {
+            this.list = lsList.split(',');
+        }
         this.refresh();
 
         $('#pixelperfect-layers').event('click', function (e) {

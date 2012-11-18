@@ -9,7 +9,7 @@
 * ~~opacity slider~~
 * make it look better
 * ~~drag and drop of files~~
-* layer order bug
+* ~~layer order bug~~
 * nice example page
 * project page
 * mobile version

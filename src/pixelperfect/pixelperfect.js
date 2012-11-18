@@ -487,7 +487,7 @@ var PixelPerfect = {
             }
 
             // help [ ? ]
-            if(e.ctrlKey && e.charCode === 47) {
+            if (e.ctrlKey && e.charCode === 47) {
                 PixelPerfect.help();
             }
 

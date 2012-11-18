@@ -11,7 +11,7 @@
  clientWidth, elements, elements_length, event, events, every, hasOwnProperty,
  innerHeight, innerWidth, left, length, nodeName, opacity, parentNode,
  prototype, push, querySelectorAll, remove, removeChild, removeClass, replace,
- setOpacity, style, top, toString, transitionDuration, visible
+ setOpacity, style, toString, top, transitionDuration
  */
 var Collection = function (selector, parentElement, caching) {
     var elements, results, l_results, i;
