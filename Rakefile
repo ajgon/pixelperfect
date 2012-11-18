@@ -66,7 +66,7 @@ def build type = :production
 
   js = Uglifier.compile(js) if type == :production
 
-  js = "/*jslint vars: true, white: true, browser: true */\n/*global $, Collection, DragAndDrop, Hacks, Layers, PixelPerfect */\n" + js if type == :lint
+  js = "/*jslint vars: true, white: true, browser: true */\n/*global $, PixelPerfect */\n" + js if type == :lint
 
   File.open('dist/pixelperfect.js', 'w') do |f|
     f.write(js)

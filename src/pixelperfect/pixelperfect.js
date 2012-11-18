@@ -1,21 +1,23 @@
 /*jslint browser: true, sloppy: true */
-/*global $, DragAndDrop, Layers */
+/*global $, DragAndDrop, Layers, PP */
 /*properties
- DEFAULTS, HTML, STYLES, URL, active, addEventListener, align, animate,
- appendChild, applyOptions, attributes, bind, body, call, catchFile, charCode,
- checked, className, click, clientHeight, createElement, createObjectURL,
- ctrlKey, defaultView, display, elements, event, every, files, fillSelected,
- focus, getAttribute, getComputedStyle, getElementById, getItem, handler,
- hasOwnProperty, head, height, help, hidden, init, initFileHandling, initHTML,
- initInterfaceEvents, initKeyEvents, initOptions, initStyles, initWrapper,
- innerHTML, innerHeight, innerWidth, insertLayer, keyCode, layers, left,
- makeDraggable, margin, match, max, maxHeight, min, minHeight, minimized,
- name, next, onDrop, opacity, options, overflow, overlay, position,
- preventDefault, previous, refreshInterface, refreshOptions, refreshOverlay,
- remember, remove, removeLayer, replace, round, setAttribute, setByIndex,
+ B, C, DEFAULTS, F, FileReader, HTML, L, M, O, R, STYLES, T, U, X, Y, '^<',
+ '^>', '^?', '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]',
+ active, addEventListener, align, animate, appendChild, applyOptions,
+ attributes, bind, body, call, catchFile, charCode, checked, className, click,
+ clientHeight, createElement, ctrlKey, defaultView, display, elements, event,
+ every, files, fillSelected, focus, getAttribute, getComputedStyle,
+ getElementById, getItem, handler, hasOwnProperty, head, height, help, hidden,
+ init, initFileHandling, initHTML, initInterfaceEvents, initKeyEvents,
+ initOptions, initStyles, initWrapper, innerHTML, innerHeight, innerWidth,
+ insertLayer, keyCode, keys, layers, left, makeDraggable, margin, match, max,
+ maxHeight, min, minHeight, minimized, name, next, onDrop, onload, opacity,
+ options, overflow, overlay, position, preventDefault, previous,
+ readAsDataURL, refreshInterface, refreshOptions, refreshOverlay, remember,
+ remove, removeLayer, replace, result, round, setAttribute, setByIndex,
  setDefaults, setItem, setOpacity, setParam, split, src, storeOptions, style,
- target, toString, top, updateOptions, value, visible, width, wrapper, x, y,
- zIndex
+ target, toString, top, updateOptions, value, visible, which, width, wrapper,
+ x, y, zIndex
  */
 var PixelPerfect = {
     STYLES: '##CSS_BASE64##',
@@ -234,7 +236,12 @@ var PixelPerfect = {
             document.getElementById('pixelperfect-fileinput').click();
         });
         $('#pixelperfect-fileinput').event('change', function (e) {
-            Layers.insertLayer(window.URL.createObjectURL(e.target.files[0]));
+            var fileReader = new window.FileReader();
+            e.preventDefault();
+            fileReader.onload = function (e) {
+                Layers.insertLayer(e.target.result);
+            };
+            fileReader.readAsDataURL(e.target.files[0]);
         }.bind(this));
         $('#pixelperfect-file').event('keypress', function (e) {
             if (e.keyCode === 13 || e.charCode === 13) {
@@ -373,112 +380,119 @@ var PixelPerfect = {
             var overlayRadio = false, option;
             // overlay
             // over [ O ]
-            if (overlayMode && !e.ctrlKey && e.charCode === 111) {
+            if (overlayMode && !e.ctrlKey && e.which === PP.keys.O) {
                 overlayRadio = document.getElementById('pixelperfect-overlay-over');
             }
             // below [ B ]
-            if (overlayMode && !e.ctrlKey && e.charCode === 98) {
+            if (overlayMode && !e.ctrlKey && e.which === PP.keys.B) {
                 overlayRadio = document.getElementById('pixelperfect-overlay-below');
             }
             if (overlayRadio) {
                 overlayRadio.setAttribute('checked', 'checked');
                 overlayRadio.checked = true;
             }
-            overlayMode = (e.ctrlKey && e.charCode === 111);
+            if (e.which !== 17) {
+                overlayMode = (e.ctrlKey && e.which === PP.keys['^O']);
+            }
 
             // position
             // x [ X ]
-            if (positionMode && !e.ctrlKey && e.charCode === 120) {
+            if (positionMode && !e.ctrlKey && e.which === PP.keys.X) {
                 document.getElementById('pixelperfect-x').focus();
             }
             // y [ Y ]
-            if (positionMode && !e.ctrlKey && e.charCode === 121) {
+            if (positionMode && !e.ctrlKey && e.which === PP.keys.Y) {
                 document.getElementById('pixelperfect-y').focus();
             }
-            positionMode = (e.ctrlKey && e.charCode === 112);
-
+            if (e.which !== 17) {
+                positionMode = (e.ctrlKey && e.which === PP.keys['^P']);
+            }
             // align
             // left [ L ]
-            if (alignMode && !e.ctrlKey && e.charCode === 108) {
+            if (alignMode && !e.ctrlKey && e.which === PP.keys.L) {
                 PixelPerfect.align('left');
             }
             // center [ C ]
-            if (alignMode && !e.ctrlKey && e.charCode === 99) {
+            if (alignMode && !e.ctrlKey && e.which === PP.keys.C) {
                 PixelPerfect.align('center');
             }
             // right [ R ]
-            if (alignMode && !e.ctrlKey && e.charCode === 114) {
+            if (alignMode && !e.ctrlKey && e.which === PP.keys.R) {
                 PixelPerfect.align('right');
             }
             // top [ T ]
-            if (alignMode && !e.ctrlKey && e.charCode === 116) {
+            if (alignMode && !e.ctrlKey && e.which === PP.keys.T) {
                 PixelPerfect.align('top');
             }
             // middle [ M ]
-            if (alignMode && !e.ctrlKey && e.charCode === 109) {
+            if (alignMode && !e.ctrlKey && e.which === PP.keys.M) {
                 PixelPerfect.align('middle');
             }
             // bottom [ B ]
-            if (alignMode && !e.ctrlKey && e.charCode === 98) {
+            if (alignMode && !e.ctrlKey && e.which === PP.keys.B) {
                 PixelPerfect.align('bottom');
             }
-            alignMode = (e.ctrlKey && e.charCode === 97);
+            if (e.which !== 17) {
+                alignMode = (e.ctrlKey && e.which === PP.keys['^A']);
+            }
 
             // file
             // upload [ F ]
-            if (fileMode && !e.ctrlKey && e.charCode === 102) {
+            if (fileMode && !e.ctrlKey && e.which === PP.keys.F) {
                 document.getElementById('pixelperfect-fileinput').click();
             }
             // URL [ U ]
-            if (fileMode && !e.ctrlKey && e.charCode === 117) {
+            if (fileMode && !e.ctrlKey && e.which === PP.keys.U) {
                 document.getElementById('pixelperfect-file').focus();
             }
-            fileMode = (e.ctrlKey && e.charCode === 102);
+            if (e.which !== 17) {
+                fileMode = (e.ctrlKey && e.which === PP.keys['^F']);
+            }
 
             // layer
             // number [ 1-9,0 ]
-            if (e.ctrlKey && e.charCode >= 48 && e.charCode <= 57) {
-                Layers.setByIndex(e.charCode === 48 ? 9 : e.charCode - 49);
+            if (e.ctrlKey && e.which >= 48 && e.which <= 57) {
+                Layers.setByIndex(e.which === 48 ? 9 : e.which - 49);
             }
             // next [ ] ]
-            if (e.ctrlKey && e.charCode === 29) {
+            if (e.ctrlKey && e.which === PP.keys['^]']) {
                 Layers.next();
             }
             // prev [ [ ]
-            if (e.ctrlKey && e.charCode === 27) {
+            if (e.ctrlKey && e.which === PP.keys['^[']) {
                 Layers.previous();
             }
             // remove [ R ]
-            if (e.ctrlKey && e.charCode === 114) {
+            if (e.ctrlKey && e.which === PP.keys['^R']) {
                 Layers.removeLayer(Layers.fillSelected());
             }
 
             // opacity
             // focus on input [ T ]
-            if (e.ctrlKey && e.charCode === 116) {
+            if (e.ctrlKey && e.which === PP.keys['^T']) {
                 document.getElementById('pixelperfect-opacity').focus();
             }
             // increase [ > ]
-            if (e.ctrlKey && e.charCode === 46) {
+            if (e.ctrlKey && e.which === PP.keys['^>']) {
                 PixelPerfect.setParam('opacity', parseInt(PixelPerfect.options.opacity, 10) + 1);
             }
             // decrease [ < ]
-            if (e.ctrlKey && e.charCode === 44) {
+            if (e.ctrlKey && e.which === PP.keys['^<']) {
                 PixelPerfect.setParam('opacity', PixelPerfect.options.opacity - 1);
             }
 
             // hide [ H ]
             // minimize [ M ]
             // on/off [ X ]
-            if (e.ctrlKey && (e.charCode === 104 || e.charCode === 109 || e.charCode === 120)) {
-                switch (e.charCode) {
-                case 104:
+            if (e.ctrlKey && (e.which === PP.keys['^H'] || e.which === PP.keys['^M'] || e.which === PP.keys['^X'])) {
+                switch (e.which) {
+                case PP.keys['^H']:
                     option = 'hidden';
                     break;
-                case 109:
+                case PP.keys['^M']:
                     option = 'minimized';
                     break;
-                case 120:
+                case PP.keys['^X']:
                     option = 'active';
                     break;
                 }
@@ -487,10 +501,9 @@ var PixelPerfect = {
             }
 
             // help [ ? ]
-            if (e.ctrlKey && e.charCode === 47) {
+            if (e.ctrlKey && e.which === PP.keys['^?']) {
                 PixelPerfect.help();
             }
-
             PixelPerfect.refreshOptions();
         });
     },

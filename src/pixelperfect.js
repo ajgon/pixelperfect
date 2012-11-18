@@ -1,8 +1,9 @@
+//= require "./pixelperfect/prefixedproperties"
 //= require "./pixelperfect/collection"
-//= require "./pixelperfect/draganddrop"
 //= require "./pixelperfect/layers"
-//= require "./pixelperfect/pixelperfect"
+//= require "./pixelperfect/draganddrop"
 //= require "./pixelperfect/hacks"
+//= require "./pixelperfect/pixelperfect"
 /*jslint browser: true, sloppy: true */
 /*global Collection, Hacks, PixelPerfect */
 
@@ -12,6 +13,7 @@ var $ = function (selector, parentElement, caching) {
 window.$ = $;
 
 window.onload = function () {
+    PrefixedProperties.init();
     Hacks.preLoad();
     PixelPerfect.init();
     Hacks.postLoad();

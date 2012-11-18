@@ -1,12 +1,13 @@
 /*jslint browser: true, sloppy: true */
-/*global $, DragAndDrop */
+/*global $, DragAndDrop, PrefixedProperties */
 /*properties
- URL, appendChild, bind, call, change, className, clientWidth, createElement,
- elements, event, events, firstChild, getElementById, hasOwnProperty,
- insertBefore, left, makeDraggable, match, max, min, offsetLeft, onMove,
- pageX, parentNode, postLoad, post_opacityRange, preLoad, pre_windowURL,
+ URL, '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X', appendChild, bind,
+ call, change, className, clientWidth, createElement, elements, event, events,
+ firstChild, getElementById, hasOwnProperty, insertBefore, keys, left,
+ makeDraggable, match, max, min, offsetLeft, onMove, pageX, parentNode,
+ postLoad, post_opacityRange, preLoad, pre_keyCodes, pre_windowURL,
  preventDefault, remember, removeChild, round, setAttribute, stopPropagation,
- style, toString, top, type, value, webkitURL
+ style, toString, top, type, userAgent, value, webkitURL
  */
 var Hacks = {
     // http://caniuse.com/bloburls
@@ -19,6 +20,19 @@ var Hacks = {
             } else {
                 window.URL = window.webkitURL;
             }
+        }
+    },
+    pre_keyCodes: function () {
+        if (navigator.userAgent.match(/Gecko/) && !navigator.userAgent.match(/KHTML/)) {
+            PrefixedProperties.keys['^X'] = 120;
+            PrefixedProperties.keys['^M'] = 109;
+            PrefixedProperties.keys['^H'] = 104;
+            PrefixedProperties.keys['^O'] = 111;
+            PrefixedProperties.keys['^P'] = 112;
+            PrefixedProperties.keys['^F'] = 102;
+            PrefixedProperties.keys['^A'] = 97;
+            PrefixedProperties.keys['^T'] = 116;
+            PrefixedProperties.keys['^R'] = 114;
         }
     },
     // http://caniuse.com/input-range

@@ -13,6 +13,7 @@
  prototype, push, querySelectorAll, remove, removeChild, removeClass, replace,
  setOpacity, style, toString, top, transitionDuration
  */
+/*global PP */
 var Collection = function (selector, parentElement, caching) {
     var elements, results, l_results, i;
     if (!selector) {
@@ -65,6 +66,8 @@ Collection.prototype = {
      * Number of elements
      */
     elements_length: 0,
+
+
 
     /**
      * Simple event handler for collections
@@ -161,7 +164,7 @@ Collection.prototype = {
                 }
             }
 
-            element.style.transitionDuration = (duration / 1000).toString() + 's';
+            element.style[PP.transitionDuration] = (duration / 1000).toString() + 's';
 
             for (p in properties) {
                 if (properties.hasOwnProperty(p)) {

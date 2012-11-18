@@ -1,17 +1,31 @@
 /*jslint browser: true, sloppy: true */
 /*global $, PixelPerfect */
 /*properties
- URL, addClass, addToList, appendChild, appendLayer, bind, call, className,
- createElement, drawImage, elements, elements_length, event, fillSelected,
- getAttribute, getContext, getItem, getSelected, hasOwnProperty, height,
- indexOf, init, innerHTML, insertLayer, join, length, list, match, next,
- nextSibling, onload, parentNode, preventDefault, previous, previousSibling,
- push, refresh, refreshOverlay, remove, removeClass, removeFromList,
- removeItem, removeLayer, replace, revokeObjectURL, selectLayer, setAttribute,
- setByIndex, setItem, splice, split, src, target, toDataURL, width
+ addClass, addToList, appendChild, appendLayer, bind, call, charCodeAt,
+ className, createElement, elements, elements_length, event, fillSelected,
+ getAttribute, getItem, getSelected, hasOwnProperty, hash, indexOf, init,
+ innerHTML, insertLayer, join, length, list, match, next, nextSibling, onload,
+ parentNode, preventDefault, previous, previousSibling, push, refresh,
+ refreshOverlay, remove, removeClass, removeFromList, removeItem, removeLayer,
+ selectLayer, setAttribute, setByIndex, setItem, splice, split, src, target,
+ toString
  */
 var Layers = {
     list: [],
+    hash: function (str) {
+        /*jslint bitwise: true*/
+        var i, char, hash = 0;
+        if (str.length === 0) {
+            return hash;
+        }
+        for (i = 0; i < str.length; i += 1) {
+            char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        /*jslint bitwise: false*/
+        return hash.toString(16);
+    },
     addToList: function (layer_id) {
         if (this.list.indexOf(layer_id) === -1) {
             this.list.push(layer_id);
@@ -28,32 +42,18 @@ var Layers = {
     insertLayer: function (src, layer_id) {
         var div_layer = document.createElement('div'),
             a_remove = document.createElement('a'),
-            img = new Image(),
-            canvas = document.createElement('canvas'),
-            ctx = canvas.getContext('2d');
+            img = new Image();
         div_layer.className = 'pixelperfect-layer';
         a_remove.className = 'pixelperfect-button';
         a_remove.innerHTML = '&#10008;';
         div_layer.appendChild(img);
         div_layer.appendChild(a_remove);
-
-        if (src.match(/(^blob:)|(^http)/)) {
+        if (src.match(/(^data:)|(^http)/)) {
             img.onload = function () {
-                var blob, layer_id;
-                blob = img.src.replace(/^blob:/, '');
-                layer_id = 'pixelperfect:layer:' + blob.match(/[a-zA-Z0-9]+/g).join('');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-                try {
-                    localStorage.setItem(layer_id, canvas.toDataURL('image/jpeg'));
-                } catch (e) {
-                    localStorage.setItem(layer_id, src);
-                }
+                var layer_id;
+                layer_id = 'pixelperfect:layer:' + Layers.hash(img.src);
+                localStorage.setItem(layer_id, img.src);
                 div_layer.setAttribute('data-id', layer_id);
-                if (src.match(/^blob:/)) {
-                    window.URL.revokeObjectURL(blob);
-                }
                 this.appendLayer(div_layer);
                 this.selectLayer(this.fillSelected());
                 this.addToList(layer_id);
@@ -66,7 +66,6 @@ var Layers = {
             this.appendLayer(div_layer);
             this.selectLayer(this.fillSelected());
         }
-
         img.src = src;
     },
     appendLayer: function (layer_container) {
