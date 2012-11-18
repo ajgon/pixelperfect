@@ -1,20 +1,21 @@
 /*jslint browser: true, sloppy: true */
 /*global $, DragAndDrop, Layers */
 /*properties
- DEFAULTS, HTML, STYLES, URL, active, addEventListener, align, appendChild,
- applyOptions, attributes, bind, body, call, catchFile, charCode, checked,
- className, click, clientHeight, createElement, createObjectURL, ctrlKey,
- defaultView, display, elements, event, every, files, fillSelected, focus,
- getAttribute, getComputedStyle, getElementById, getItem, handler,
- hasOwnProperty, head, height, hidden, init, initFileHandling, initHTML,
+ DEFAULTS, HTML, STYLES, URL, active, addEventListener, align, animate,
+ appendChild, applyOptions, attributes, bind, body, call, catchFile, charCode,
+ checked, className, click, clientHeight, createElement, createObjectURL,
+ ctrlKey, defaultView, display, elements, event, every, files, fillSelected,
+ focus, getAttribute, getComputedStyle, getElementById, getItem, handler,
+ hasOwnProperty, head, height, help, hidden, init, initFileHandling, initHTML,
  initInterfaceEvents, initKeyEvents, initOptions, initStyles, initWrapper,
  innerHTML, innerHeight, innerWidth, insertLayer, keyCode, layers, left,
  makeDraggable, margin, match, max, maxHeight, min, minHeight, minimized,
  name, next, onDrop, opacity, options, overflow, overlay, position,
  preventDefault, previous, refreshInterface, refreshOptions, refreshOverlay,
  remember, remove, removeLayer, replace, round, setAttribute, setByIndex,
- setDefaults, setItem, setOpacity, split, src, storeOptions, style, target,
- toString, top, updateOptions, value, width, wrapper, x, y, zIndex
+ setDefaults, setItem, setOpacity, setParam, split, src, storeOptions, style,
+ target, toString, top, updateOptions, value, visible, width, wrapper, x, y,
+ zIndex
  */
 var PixelPerfect = {
     STYLES: '##CSS_BASE64##',
@@ -41,7 +42,13 @@ var PixelPerfect = {
     },
     layers: [],
     wrapper: null,
-
+    help: function () {
+        var help = $('#pixelperfect-help-popup');
+        help.animate({
+            opacity: (help.elements[0].visible ? 0 : 1)
+        });
+        help.elements[0].visible = !help.elements[0].visible;
+    },
     refreshOverlay: function (layer_id) {
         var overlay;
 
@@ -70,11 +77,11 @@ var PixelPerfect = {
         if (this.options.overlay === 'below') {
             $(this.wrapper).setOpacity(this.options.opacity);
             $(overlay).setOpacity(100);
-            overlay.style.zIndex = '-2147483646';
+            overlay.style.zIndex = '-2147483645';
         } else {
             $(this.wrapper).setOpacity(100);
             $(overlay).setOpacity(this.options.opacity);
-            overlay.style.zIndex = '2147483646';
+            overlay.style.zIndex = '2147483645';
         }
 
         overlay.style.left = this.options.position.x + 'px';
@@ -251,13 +258,15 @@ var PixelPerfect = {
             }
         }
 
+        /*jslint forin: true*/
         for (el in body_css) {
-            if (body_css.hasOwnProperty(el) && !el.match(/^[0-9]/) && el.match(/^background/) && wrapper_css[el] !== body_css[el]) {
+            if (!el.match(/^[0-9]/) && el.match(/^background/) && wrapper_css[el] !== body_css[el]) {
                 tmp = wrapper_css[el];
                 wrapper.style[el] = body_css[el];
                 document.body.style[el] = tmp;
             }
         }
+        /*jslint forin: false*/
 
         wrapper.className = document.body.className + ' pixelperfect-wrapper';
         wrapper.style.overflow = 'hidden';
@@ -282,10 +291,13 @@ var PixelPerfect = {
     },
 
     initHTML: function () {
-        var pixelperfect = document.createElement('div');
+        var pixelperfect = document.createElement('div'), help;
         pixelperfect.setAttribute('id', 'pixelperfect');
         pixelperfect.innerHTML = this.HTML;
         document.body.appendChild(pixelperfect);
+        help = document.getElementById('pixelperfect-help-popup');
+        document.body.appendChild(help);
+        help.visible = false;
     },
 
     initStyles: function () {
@@ -315,9 +327,12 @@ var PixelPerfect = {
             var option = this.elements[0].getAttribute('id').replace('pixelperfect-', '');
             e.preventDefault();
 
-            PixelPerfect.options[option] = !PixelPerfect.options[option];
-
-            PixelPerfect.refreshInterface();
+            if (option === 'help') {
+                PixelPerfect.help();
+            } else {
+                PixelPerfect.options[option] = !PixelPerfect.options[option];
+                PixelPerfect.refreshInterface();
+            }
         });
 
         $('#pixelperfect-opacity-range').event('change', function () {
@@ -325,6 +340,20 @@ var PixelPerfect = {
             PixelPerfect.applyOptions();
             PixelPerfect.refreshInterface();
         });
+    },
+    setParam: function (item, value) {
+        if (typeof (item) === 'string') {
+            item = $('#pixelperfect-' + item);
+        }
+        if (item.elements[0].getAttribute('data-max')) {
+            value = Math.min(parseInt(item.elements[0].getAttribute('data-max'), 10), value);
+        }
+        if (item.elements[0].getAttribute('data-min')) {
+            value = Math.max(parseInt(item.elements[0].getAttribute('data-min'), 10), value);
+        }
+        item.elements[0].value = value;
+        PixelPerfect.refreshOptions();
+
     },
     initKeyEvents: function () {
         var overlayMode = false, positionMode = false, alignMode = false, fileMode = false;
@@ -337,14 +366,7 @@ var PixelPerfect = {
             if (e.keyCode === 38 || e.keyCode === 40) {
                 newValue = newValue + (e.keyCode === 38 ? 1 : -1);
             }
-            if (this.elements[0].getAttribute('data-max')) {
-                newValue = Math.min(parseInt(this.elements[0].getAttribute('data-max'), 10), newValue);
-            }
-            if (this.elements[0].getAttribute('data-min')) {
-                newValue = Math.max(parseInt(this.elements[0].getAttribute('data-min'), 10), newValue);
-            }
-            this.elements[0].value = newValue;
-            PixelPerfect.refreshOptions();
+            PixelPerfect.setParam(this, newValue);
         });
 
         $(document).event('keypress', function (e) {
@@ -431,9 +453,18 @@ var PixelPerfect = {
                 Layers.removeLayer(Layers.fillSelected());
             }
 
-            // opacity [ T ]
+            // opacity
+            // focus on input [ T ]
             if (e.ctrlKey && e.charCode === 116) {
                 document.getElementById('pixelperfect-opacity').focus();
+            }
+            // increase [ > ]
+            if (e.ctrlKey && e.charCode === 46) {
+                PixelPerfect.setParam('opacity', parseInt(PixelPerfect.options.opacity, 10) + 1);
+            }
+            // decrease [ < ]
+            if (e.ctrlKey && e.charCode === 44) {
+                PixelPerfect.setParam('opacity', PixelPerfect.options.opacity - 1);
             }
 
             // hide [ H ]
@@ -453,6 +484,11 @@ var PixelPerfect = {
                 }
                 PixelPerfect.options[option] = !PixelPerfect.options[option];
                 PixelPerfect.refreshInterface();
+            }
+
+            // help [ ? ]
+            if(e.ctrlKey && e.charCode === 47) {
+                PixelPerfect.help();
             }
 
             PixelPerfect.refreshOptions();

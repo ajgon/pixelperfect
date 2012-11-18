@@ -17,7 +17,7 @@ $selected: #edeff4;
   -o-box-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
   -ms-box-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
-  z-index: 2147483647;
+  z-index: 2147483646;
   background: #fff;
 
   * {
@@ -243,4 +243,73 @@ $selected: #edeff4;
 #pixelperfect-overlay {
   position: absolute;
   cursor: move;
+}
+
+#pixelperfect-help-popup {
+  background: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  width: 740px;
+  height: 400px;
+  top: 50%;
+  left: 50%;
+  margin: -200px 0 0 -390px;
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+  border-radius: 20px;
+  z-index: 2147483647;
+  padding: 20px 20px 10px;
+  font-size: 12px;
+  opacity: 0;
+
+  > * {
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 20px;
+    margin: 0 0 10px;
+  }
+
+  h2 {
+    font-size: 16px;
+    border-bottom: solid 1px #ccc;
+    margin: 0 0 5px;
+  }
+
+  .pixelperfect-shortcuts {
+    width: 360px;
+    margin: 0;
+    float: left;
+
+    dl {
+      overflow: hidden;
+
+      dt {
+        float: left;
+        clear: left;
+        width: 90px;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 18px;
+      }
+
+      dd {
+        float: left;
+        margin: 0;
+        padding: 0;
+        line-height: 18px;
+      }
+    }
+
+    &+ .pixelperfect-shortcuts {
+      margin-left: 20px;
+    }
+
+  }
+
 }

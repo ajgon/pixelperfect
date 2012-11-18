@@ -7,10 +7,11 @@
  */
 /*jslint browser: true, sloppy: true */
 /*properties
- addClass, addEventListener, bind, className, elements, elements_length,
- event, events, every, length, nodeName, opacity, parentNode, prototype, push,
- querySelectorAll, remove, removeChild, removeClass, replace, setOpacity,
- style, toString
+ addClass, addEventListener, animate, bind, className, clientHeight,
+ clientWidth, elements, elements_length, event, events, every, hasOwnProperty,
+ innerHeight, innerWidth, left, length, nodeName, opacity, parentNode,
+ prototype, push, querySelectorAll, remove, removeChild, removeClass, replace,
+ setOpacity, style, top, toString, transitionDuration, visible
  */
 var Collection = function (selector, parentElement, caching) {
     var elements, results, l_results, i;
@@ -119,6 +120,56 @@ Collection.prototype = {
         }.bind(this));
 
         return this;
+    },
+    /* Very basic, supports only needed cases */
+    animate: function (properties, duration) {
+        if (duration === undefined) { duration = 500; }
+        this.elements.every(function (element) {
+            var p;
+
+            if (properties.top) {
+                switch (properties.top) {
+                case 'top':
+                    properties.top = '0px';
+                    break;
+                case 'middle':
+                    properties.top = ((window.innerHeight - element.clientHeight) / 2).toString() + 'px';
+                    break;
+                case 'bottom':
+                    properties.top = (window.innerHeight - element.clientHeight).toString() + 'px';
+                    break;
+                default:
+                    properties.top = parseInt(properties.top, 10).toString() + 'px';
+                    break;
+                }
+            }
+
+            if (properties.left) {
+                switch (properties.left) {
+                case 'left':
+                    properties.left = '0px';
+                    break;
+                case 'center':
+                    properties.left = ((window.innerWidth - element.clientWidth) / 2).toString() + 'px';
+                    break;
+                case 'right':
+                    properties.left = (window.innerWidth - element.clientWidth).toString() + 'px';
+                    break;
+                default:
+                    properties.left = parseInt(properties.left, 10).toString() + 'px';
+                    break;
+                }
+            }
+
+            element.style.transitionDuration = (duration / 1000).toString() + 's';
+
+            for (p in properties) {
+                if (properties.hasOwnProperty(p)) {
+                    element.style[p] = properties[p];
+                }
+            }
+
+        }.bind(this));
     }
 
 };

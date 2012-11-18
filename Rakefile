@@ -12,6 +12,10 @@ def closure js
   "(function() {\n    \"use strict\";\n#{js}\n}());"
 end
 
+def get_html file
+  File.read(File.join(File.dirname(__FILE__), 'src', file)).gsub(/>\s+</, '><').strip
+end
+
 def jslint
   jslint_config = YAML.load_file('jslint.yml')
   js_files = Dir.glob(jslint_config['jslint']['paths']).to_a - jslint_config['jslint']['exclude_paths'].to_a
@@ -55,14 +59,14 @@ def build type = :production
 
   # Build JS
   js = closure sprockets.find_asset('pixelperfect.js').to_s
-  js = js.gsub(/\/\*.*?\*\//m, '').gsub(/\/\/.*?\n/, '') if type == :lint
+  js = js.gsub(/\/\*jslint.*?[^e]\*\//, '').gsub(/\/\*(global|properties).*?\*\//m, '').gsub(/\/\/.*?\n/, '') if type == :lint
 
   js.sub!('##CSS_BASE64##', Base64.strict_encode64(css))
-  js.sub!('##HTML##', File.read(File.join(File.dirname(__FILE__), 'src', 'pixelperfect.html')).gsub(/>\s+</, '><').strip )
+  js.sub!('##HTML##', get_html('pixelperfect.html'))
 
   js = Uglifier.compile(js) if type == :production
 
-  js = "/*jslint vars: true, white: true, browser: true */\n/*global $, Collection, DragAndDrop, Hacks, Layers, PixelPerfect */" + js if type == :lint
+  js = "/*jslint vars: true, white: true, browser: true */\n/*global $, Collection, DragAndDrop, Hacks, Layers, PixelPerfect */\n" + js if type == :lint
 
   File.open('dist/pixelperfect.js', 'w') do |f|
     f.write(js)
