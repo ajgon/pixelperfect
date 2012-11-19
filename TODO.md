@@ -17,6 +17,7 @@
 * browser snippet (bookmark)
 * browsers support
 * document code
+* translations
 
 ## Clean code
 * move document.getElementById('pixelperfect') to PixelPerfect.container

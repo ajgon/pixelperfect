@@ -1,29 +1,10 @@
 /*jslint browser: true, sloppy: true */
 /*global $, DragAndDrop, PrefixedProperties */
-/*properties
- URL, '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X', appendChild, bind,
- call, change, className, clientWidth, createElement, elements, event, events,
- firstChild, getElementById, hasOwnProperty, insertBefore, keys, left,
- makeDraggable, match, max, min, offsetLeft, onMove, pageX, parentNode,
- postLoad, post_opacityRange, preLoad, pre_keyCodes, pre_windowURL,
- preventDefault, remember, removeChild, round, setAttribute, stopPropagation,
- style, toString, top, type, userAgent, value, webkitURL
- */
 var Hacks = {
-    // http://caniuse.com/bloburls
-    pre_windowURL: function () {
-        if (!window.URL) {
-            if (!window.webkitURL) {
-                window.URL = false;
-                // Opera and IE
-                // let's figure something out later
-            } else {
-                window.URL = window.webkitURL;
-            }
-        }
-    },
+    // keyboard handling on browsers... this is madness!
     pre_keyCodes: function () {
         if (navigator.userAgent.match(/Gecko/) && !navigator.userAgent.match(/KHTML/)) {
+            PrefixedProperties.keys.arrowEvent = 'keypress';
             PrefixedProperties.keys['^X'] = 120;
             PrefixedProperties.keys['^M'] = 109;
             PrefixedProperties.keys['^H'] = 104;
@@ -33,6 +14,34 @@ var Hacks = {
             PrefixedProperties.keys['^A'] = 97;
             PrefixedProperties.keys['^T'] = 116;
             PrefixedProperties.keys['^R'] = 114;
+        }
+        if (window.opera) {
+            PrefixedProperties.keys.event = 'keyup';
+            PrefixedProperties.keys['^?'] = 191;
+            PrefixedProperties.keys['^X'] = 88;
+            PrefixedProperties.keys['^M'] = 77;
+            PrefixedProperties.keys['^H'] = 72;
+            PrefixedProperties.keys['^O'] = 79;
+            PrefixedProperties.keys.O = 79;
+            PrefixedProperties.keys.B = 66;
+            PrefixedProperties.keys['^P'] = 80;
+            PrefixedProperties.keys.X = 88;
+            PrefixedProperties.keys.Y = 89;
+            PrefixedProperties.keys['^F'] = 70;
+            PrefixedProperties.keys.F = 70;
+            PrefixedProperties.keys.U = 85;
+            PrefixedProperties.keys['^A'] = 65;
+            PrefixedProperties.keys.L = 76;
+            PrefixedProperties.keys.C = 67;
+            PrefixedProperties.keys.R = 82;
+            PrefixedProperties.keys.T = 84;
+            PrefixedProperties.keys.M = 77;
+            PrefixedProperties.keys['^T'] = 84;
+            PrefixedProperties.keys['^<'] = 188;
+            PrefixedProperties.keys['^>'] = 190;
+            PrefixedProperties.keys['^['] = 219;
+            PrefixedProperties.keys['^]'] = 221;
+            PrefixedProperties.keys['^R'] = 82;
         }
     },
     // http://caniuse.com/input-range
@@ -82,11 +91,17 @@ var Hacks = {
             }.bind(document.getElementById('pixelperfect-opacity-range')), 50);
         }
     },
+    // http://caniuse.com/filereader
+    post_FileReader: function () {
+        if (!window.FileReader || window.opera) { // Newest Opera (12.10) fails miserably
+            $('#pixelperfect-fileinput, #pixelperfect-upload-file, #pixelperfect-drop-file').remove();
+        }
+    },
     preLoad: function () {
         var hack;
 
         for (hack in this) {
-            if (this.hasOwnProperty(hack) && hack !== 'preLoad' && hack.match(/^pre_/)) {
+            if (this.hasOwnProperty(hack) && hack.match(/^pre_/)) {
                 this[hack]();
             }
         }
@@ -95,7 +110,7 @@ var Hacks = {
         var hack;
 
         for (hack in this) {
-            if (this.hasOwnProperty(hack) && hack !== 'postLoad' && hack.match(/^post_/)) {
+            if (this.hasOwnProperty(hack) && hack.match(/^post_/)) {
                 this[hack]();
             }
         }

@@ -1,18 +1,18 @@
 /*jslint browser: true, sloppy: true */
 /*global $, DragAndDrop, Layers, PP */
 /*properties
- B, C, DEFAULTS, F, FileReader, HTML, L, M, O, R, STYLES, T, U, X, Y, '^<',
- '^>', '^?', '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]',
- active, addEventListener, align, animate, appendChild, applyOptions,
- attributes, bind, body, call, catchFile, charCode, checked, className, click,
- clientHeight, createElement, ctrlKey, defaultView, display, elements, event,
- every, files, fillSelected, focus, getAttribute, getComputedStyle,
- getElementById, getItem, handler, hasOwnProperty, head, height, help, hidden,
- init, initFileHandling, initHTML, initInterfaceEvents, initKeyEvents,
- initOptions, initStyles, initWrapper, innerHTML, innerHeight, innerWidth,
- insertLayer, keyCode, keys, layers, left, makeDraggable, margin, match, max,
- maxHeight, min, minHeight, minimized, name, next, onDrop, onload, opacity,
- options, overflow, overlay, position, preventDefault, previous,
+ B, C, DEFAULTS, DOWN, F, FileReader, HTML, L, M, O, R, STYLES, T, U, UP, X,
+ Y, '^<', '^>', '^?', '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X',
+ '^[', '^]', active, addEventListener, align, animate, appendChild,
+ applyOptions, arrowEvent, attributes, bind, body, call, catchFile, charCode,
+ checked, className, click, clientHeight, createElement, ctrlKey, defaultView,
+ display, elements, event, every, files, fillSelected, focus, getAttribute,
+ getComputedStyle, getElementById, getItem, handler, hasOwnProperty, head,
+ height, help, hidden, init, initFileHandling, initHTML, initInterfaceEvents,
+ initKeyEvents, initOptions, initStyles, initWrapper, innerHTML, innerHeight,
+ innerWidth, insertLayer, keyCode, keys, layers, left, makeDraggable, margin,
+ match, max, maxHeight, min, minHeight, minimized, name, next, onDrop, onload,
+ opacity, options, overflow, overlay, position, preventDefault, previous,
  readAsDataURL, refreshInterface, refreshOptions, refreshOverlay, remember,
  remove, removeLayer, replace, result, round, setAttribute, setByIndex,
  setDefaults, setItem, setOpacity, setParam, split, src, storeOptions, style,
@@ -49,6 +49,7 @@ var PixelPerfect = {
         help.animate({
             opacity: (help.elements[0].visible ? 0 : 1)
         });
+        help.elements[0].style.zIndex = (help.elements[0].visible ? 2147483644 : 2147483647);
         help.elements[0].visible = !help.elements[0].visible;
     },
     refreshOverlay: function (layer_id) {
@@ -120,7 +121,8 @@ var PixelPerfect = {
         this.storeOptions();
 
         setTimeout(function () {
-            layerHeight = $('#pixelperfect #pixelperfect-drop-file').elements[0].clientHeight;
+            var fileDropItem = $('#pixelperfect #pixelperfect-drop-file').elements[0];
+            layerHeight = fileDropItem ? fileDropItem.clientHeight : 0;
             maxHeight = window.innerHeight - document.getElementById('pixelperfect').clientHeight - 40 + layers.clientHeight;
             layers.style.maxHeight = Math.max(layerHeight, maxHeight).toString() + 'px';
         }, 40);
@@ -364,19 +366,21 @@ var PixelPerfect = {
     },
     initKeyEvents: function () {
         var overlayMode = false, positionMode = false, alignMode = false, fileMode = false;
-        $('#pixelperfect-opacity, #pixelperfect-x, #pixelperfect-y').event('keypress', function (e) {
+        $('#pixelperfect-opacity, #pixelperfect-x, #pixelperfect-y').event(PP.keys.arrowEvent, function (e) {
+            var newValue = parseInt(this.elements[0].value, 10),
+                which = e.which === 0 ? e.keyCode : e.which;
             if (alignMode || overlayMode || positionMode || fileMode) {
                 e.preventDefault();
                 return;
             }
-            var newValue = parseInt(this.elements[0].value, 10);
-            if (e.keyCode === 38 || e.keyCode === 40) {
-                newValue = newValue + (e.keyCode === 38 ? 1 : -1);
+            if (which === PP.keys.UP || which === PP.keys.DOWN) {
+                e.preventDefault();
+                newValue = newValue + (which === PP.keys.UP ? 1 : -1);
             }
             PixelPerfect.setParam(this, newValue);
         });
 
-        $(document).event('keypress', function (e) {
+        $(document).event(PP.keys.event, function (e) {
             var overlayRadio = false, option;
             // overlay
             // over [ O ]
@@ -439,7 +443,9 @@ var PixelPerfect = {
             // file
             // upload [ F ]
             if (fileMode && !e.ctrlKey && e.which === PP.keys.F) {
-                document.getElementById('pixelperfect-fileinput').click();
+                if (document.getElementById('pixelperfect-fileinput')) {
+                    document.getElementById('pixelperfect-fileinput').click();
+                }
             }
             // URL [ U ]
             if (fileMode && !e.ctrlKey && e.which === PP.keys.U) {

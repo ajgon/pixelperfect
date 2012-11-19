@@ -1,13 +1,18 @@
 /*jslint browser: true, sloppy: true */
 /*properties
- B, C, F, L, M, O, R, T, U, X, Y, '^<', '^>', '^?', '^A', '^F', '^H', '^M',
- '^O', '^P', '^R', '^T', '^X', '^[', '^]', body, cssProperties, init, keys,
- length, style, substring, toUpperCase, vendors
+ B, C, DOWN, F, L, M, O, R, T, U, UP, X, Y, '^<', '^>', '^?', '^A', '^F',
+ '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]', arrowEvent, body,
+ cssProperties, event, init, keys, length, style, substring, toUpperCase,
+ vendors
  */
 var PrefixedProperties = {
     vendors: ['ms', 'moz', 'webkit', 'o'],
     cssProperties: ['transitionDuration'],
     keys: {
+        event: 'keypress',
+        arrowEvent: 'keydown',
+        'UP': 38,
+        'DOWN': 40,
         '^?': 47,
         '^X': 24,
         '^M': 13,
