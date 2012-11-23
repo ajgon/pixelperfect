@@ -1,9 +1,9 @@
 /*jslint browser: true, sloppy: true */
 /*global $, DragAndDrop, Layers, PP */
 /*properties
- B, C, DEFAULTS, DOWN, F, FileReader, HTML, L, M, O, R, STYLES, T, U, UP, X,
- Y, '^<', '^>', '^?', '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X',
- '^[', '^]', active, addEventListener, align, animate, appendChild,
+ B, C, DEFAULTS, DOWN, F, HTML, L, M, O, R, STYLES, T, U, UP, X, Y, '^<',
+ '^>', '^?', '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]',
+ active, addClass, addEventListener, align, animate, appendChild,
  applyOptions, arrowEvent, attributes, bind, body, call, catchFile, charCode,
  checked, className, click, clientHeight, createElement, ctrlKey, defaultView,
  display, elements, event, every, files, fillSelected, focus, getAttribute,
@@ -11,13 +11,13 @@
  height, help, hidden, init, initFileHandling, initHTML, initInterfaceEvents,
  initKeyEvents, initOptions, initStyles, initWrapper, innerHTML, innerHeight,
  innerWidth, insertLayer, keyCode, keys, layers, left, makeDraggable, margin,
- match, max, maxHeight, min, minHeight, minimized, name, next, onDrop, onload,
+ match, max, maxHeight, min, minHeight, minimized, name, next, onDrop,
  opacity, options, overflow, overlay, position, preventDefault, previous,
- readAsDataURL, refreshInterface, refreshOptions, refreshOverlay, remember,
- remove, removeLayer, replace, result, round, setAttribute, setByIndex,
+ readFile, refreshInterface, refreshOptions, refreshOverlay, remember, remove,
+ removeClass, removeLayer, replace, round, setAttribute, setByIndex,
  setDefaults, setItem, setOpacity, setParam, split, src, storeOptions, style,
- target, toString, top, updateOptions, value, visible, which, width, wrapper,
- x, y, zIndex
+ target, toString, toggleClass, top, updateOptions, value, visible, which,
+ width, wrapper, x, y, zIndex
  */
 var PixelPerfect = {
     STYLES: '##CSS_BASE64##',
@@ -50,6 +50,7 @@ var PixelPerfect = {
             opacity: (help.elements[0].visible ? 0 : 1)
         });
         help.elements[0].style.zIndex = (help.elements[0].visible ? 2147483644 : 2147483647);
+        $('#pixelperfect-help').toggleClass('pixelperfect-button-active', !help.elements[0].visible);
         help.elements[0].visible = !help.elements[0].visible;
     },
     refreshOverlay: function (layer_id) {
@@ -100,11 +101,12 @@ var PixelPerfect = {
         } else {
             document.getElementById('pixelperfect-content').style.display = 'block';
         }
+        $('#pixelperfect-minimized').toggleClass('pixelperfect-button-active', this.options.minimized);
 
         if (this.options.hidden) {
-            document.getElementById('pixelperfect').style.display = 'none';
+            $('#pixelperfect-hidden').addClass('pixelperfect-button-active');
         } else {
-            document.getElementById('pixelperfect').style.display = 'block';
+            $('#pixelperfect-hidden').removeClass('pixelperfect-button-active');
         }
 
         if (document.getElementById('pixelperfect-overlay')) {
@@ -116,6 +118,7 @@ var PixelPerfect = {
                 $('body > .pixelperfect-wrapper').setOpacity(100);
             }
         }
+        $('#pixelperfect-active').toggleClass('pixelperfect-button-active', this.options.active);
 
         this.updateOptions();
         this.storeOptions();
@@ -238,12 +241,8 @@ var PixelPerfect = {
             document.getElementById('pixelperfect-fileinput').click();
         });
         $('#pixelperfect-fileinput').event('change', function (e) {
-            var fileReader = new window.FileReader();
             e.preventDefault();
-            fileReader.onload = function (e) {
-                Layers.insertLayer(e.target.result);
-            };
-            fileReader.readAsDataURL(e.target.files[0]);
+            Layers.readFile(e.target.files[0]);
         }.bind(this));
         $('#pixelperfect-file').event('keypress', function (e) {
             if (e.keyCode === 13 || e.charCode === 13) {
@@ -510,7 +509,7 @@ var PixelPerfect = {
             if (e.ctrlKey && e.which === PP.keys['^?']) {
                 PixelPerfect.help();
             }
-            PixelPerfect.refreshOptions();
+            //PixelPerfect.refreshOptions();
         });
     },
 

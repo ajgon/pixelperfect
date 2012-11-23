@@ -7,7 +7,7 @@
 * ~~Changing field values support~~
 * ~~overlay drag and drop~~
 * ~~opacity slider~~
-* make it look better
+* ~~make it look better~~
 * ~~drag and drop of files~~
 * ~~layer order bug~~
 * nice example page

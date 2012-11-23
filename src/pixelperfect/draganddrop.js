@@ -4,14 +4,14 @@
 /*jslint browser: true, sloppy: true */
 /*global Layers */
 /*properties
- URL, addEventListener, bind, bottom, call, catchFile, catchFileDragEvent,
- catchFileDropEvent, catchHandlerEvent, className, createObjectURL,
- currentDragged, dataTransfer, draggable, elements, elements_length, files,
- getAttribute, getElementById, getItem, handler, hasOwnProperty, init,
- insertLayer, left, length, makeDraggable, match, mouseDiffX, mouseDiffY,
- offsetLeft, offsetTop, onDrag, onDrop, onMove, options, pageX, pageY,
- preventDefault, querySelector, remember, replace, right, setItem, split,
- stopPropagation, style, target, toString, top, type
+ addEventListener, bind, bottom, call, catchFile, catchFileDragEvent,
+ catchFileDropEvent, catchHandlerEvent, className, currentDragged,
+ dataTransfer, draggable, elements, elements_length, files, getAttribute,
+ getElementById, getItem, handler, hasOwnProperty, init, left, length,
+ makeDraggable, match, mouseDiffX, mouseDiffY, offsetLeft, offsetTop, onDrag,
+ onDrop, onMove, options, pageX, pageY, preventDefault, querySelector,
+ readFile, remember, replace, right, setItem, split, stopPropagation, style,
+ target, toString, top, type
  */
 var DragAndDrop = {
     /**
@@ -61,7 +61,7 @@ var DragAndDrop = {
         e.stopPropagation();
         e.preventDefault();
         if (e.type === 'dragover') {
-            e.target.className = e.type;
+            e.target.className = 'pixelperfect-' + e.type;
         } else {
             e.target.className = '';
         }
@@ -72,7 +72,7 @@ var DragAndDrop = {
         e.preventDefault();
         e.target.className = '';
         for (f = 0; f < files_length; f += 1) {
-            Layers.insertLayer(window.URL.createObjectURL(files[f]));
+            Layers.readFile(files[f]);
         }
     },
     catchFile: function (collection) {

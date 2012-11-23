@@ -1,14 +1,14 @@
 /*jslint browser: true, sloppy: true */
 /*global $, PixelPerfect */
 /*properties
- addClass, addToList, appendChild, appendLayer, bind, call, charCodeAt,
- className, createElement, elements, elements_length, event, fillSelected,
- getAttribute, getItem, getSelected, hasOwnProperty, hash, indexOf, init,
- innerHTML, insertLayer, join, length, list, match, next, nextSibling, onload,
- parentNode, preventDefault, previous, previousSibling, push, refresh,
- refreshOverlay, remove, removeClass, removeFromList, removeItem, removeLayer,
- selectLayer, setAttribute, setByIndex, setItem, splice, split, src, target,
- toString
+ FileReader, addClass, addToList, appendChild, appendLayer, bind, call,
+ charCodeAt, className, createElement, elements, elements_length, event,
+ fillSelected, getAttribute, getItem, getSelected, hasOwnProperty, hash,
+ indexOf, init, innerHTML, insertLayer, join, length, list, match, next,
+ nextSibling, onload, parentNode, preventDefault, previous, previousSibling,
+ push, readAsDataURL, readFile, refresh, refreshOverlay, remove, removeClass,
+ removeFromList, removeItem, removeLayer, result, selectLayer, setAttribute,
+ setByIndex, setItem, splice, split, src, target, toString
  */
 var Layers = {
     list: [],
@@ -38,6 +38,13 @@ var Layers = {
             this.list.splice(listPos, 1);
         }
         localStorage.setItem('pixelperfect:list', this.list.join(','));
+    },
+    readFile: function (handler) {
+        var fileReader = new window.FileReader();
+        fileReader.onload = function (e) {
+            Layers.insertLayer(e.target.result);
+        };
+        fileReader.readAsDataURL(handler);
     },
     insertLayer: function (src, layer_id) {
         var div_layer = document.createElement('div'),

@@ -11,7 +11,7 @@
  clientWidth, elements, elements_length, event, events, every, hasOwnProperty,
  innerHeight, innerWidth, left, length, nodeName, opacity, parentNode,
  prototype, push, querySelectorAll, remove, removeChild, removeClass, replace,
- setOpacity, style, toString, top, transitionDuration
+ setOpacity, style, toString, toggleClass, top, transitionDuration
  */
 /*global PP */
 var Collection = function (selector, parentElement, caching) {
@@ -98,18 +98,20 @@ Collection.prototype = {
     },
 
     removeClass: function (name) {
-        this.elements.every(function (element) {
-            element.className = element.className.replace(new RegExp(name, 'g'), '').replace(/^\s+|\s+$/, '');
-            return true;
-        }.bind(this));
-
-        return this;
+        return this.toggleClass(name, false);
     },
 
     addClass: function (name) {
-        this.removeClass(name);
+        return this.toggleClass(name, true);
+    },
+
+    toggleClass: function (name, value) {
         this.elements.every(function (element) {
-            element.className += ' ' + name;
+            element.className = element.className.replace(new RegExp(name, 'g'), '').replace(/^\s+|\s+$/, '');
+            if (value) {
+                element.className += ' ' + name;
+            }
+
             return true;
         }.bind(this));
 
