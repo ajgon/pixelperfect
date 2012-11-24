@@ -40,16 +40,17 @@ var Layers = {
         localStorage.setItem('pixelperfect:list', this.list.join(','));
     },
     readFile: function (handler) {
-        var fileReader = new window.FileReader();
+        var fileReader = new window.FileReader(), self = this;
         fileReader.onload = function (e) {
-            Layers.insertLayer(e.target.result);
+            self.insertLayer(e.target.result);
         };
         fileReader.readAsDataURL(handler);
     },
     insertLayer: function (src, layer_id) {
         var div_layer = document.createElement('div'),
             a_remove = document.createElement('a'),
-            img = new Image();
+            img = new Image(),
+            self = this;
         div_layer.className = 'pixelperfect-layer';
         a_remove.className = 'pixelperfect-button';
         a_remove.innerHTML = '&#10008;';
@@ -58,13 +59,13 @@ var Layers = {
         if (src.match(/(^data:)|(^http)/)) {
             img.onload = function () {
                 var layer_id;
-                layer_id = 'pixelperfect:layer:' + Layers.hash(img.src);
+                layer_id = 'pixelperfect:layer:' + self.hash(img.src);
                 localStorage.setItem(layer_id, img.src);
                 div_layer.setAttribute('data-id', layer_id);
-                this.appendLayer(div_layer);
-                this.selectLayer(this.fillSelected());
-                this.addToList(layer_id);
-            }.bind(this);
+                self.appendLayer(div_layer);
+                self.selectLayer(self.fillSelected());
+                self.addToList(layer_id);
+            };
         } else {
             if (layer_id !== undefined) {
                 div_layer.setAttribute('data-id', layer_id);
@@ -152,7 +153,8 @@ var Layers = {
         this.selectLayer();
     },
     init: function () {
-        var lsList = localStorage.getItem('pixelperfect:list');
+        var lsList = localStorage.getItem('pixelperfect:list'),
+            self = this;
         if (lsList) {
             this.list = lsList.split(',');
         }
@@ -162,14 +164,14 @@ var Layers = {
             var id;
             e.preventDefault();
             if (e.target.className.match('pixelperfect-button')) {
-                Layers.removeLayer.call(Layers, e.target.parentNode.getAttribute('data-id'));
+                self.removeLayer.call(self, e.target.parentNode.getAttribute('data-id'));
             } else {
                 id = e.target.getAttribute('data-id');
                 if (!id) {
                     id = e.target.parentNode.getAttribute('data-id');
                 }
                 if (id) {
-                    Layers.selectLayer(id);
+                    self.selectLayer(id);
                 }
             }
         });

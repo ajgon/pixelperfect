@@ -7,7 +7,7 @@
  */
 /*jslint browser: true, sloppy: true */
 /*properties
- addClass, addEventListener, animate, bind, className, clientHeight,
+ addClass, addEventListener, animate, bind, call, className, clientHeight,
  clientWidth, elements, elements_length, event, events, every, hasOwnProperty,
  innerHeight, innerWidth, left, length, nodeName, opacity, parentNode,
  prototype, push, querySelectorAll, remove, removeChild, removeClass, replace,
@@ -77,7 +77,10 @@ Collection.prototype = {
      */
     event: function (name, callback) {
         this.elements.every(function (element) {
-            element.addEventListener(name, callback.bind(new Collection(element)));
+            var collection = new Collection(element);
+            element.addEventListener(name, function(e) {
+                callback.call(collection, e);
+            });
             if (element.events === undefined) {
                 element.events = {};
             }
@@ -113,7 +116,7 @@ Collection.prototype = {
             }
 
             return true;
-        }.bind(this));
+        });
 
         return this;
     },
@@ -122,7 +125,7 @@ Collection.prototype = {
         this.elements.every(function (element) {
             element.style.opacity = (parseInt(value, 10) / 100.0).toString();
             return true;
-        }.bind(this));
+        });
 
         return this;
     },
@@ -174,7 +177,7 @@ Collection.prototype = {
                 }
             }
 
-        }.bind(this));
+        });
     }
 
 };

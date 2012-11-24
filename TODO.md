@@ -18,9 +18,10 @@
 * browsers support
 * document code
 * translations
+* remember options for each layer separately
 
 ## Clean code
-* move document.getElementById('pixelperfect') to PixelPerfect.container
-* change classnames to this where possible
+* ~~move document.getElementById('pixelperfect') to PixelPerfect.container~~
+* ~~change classnames to this where possible~~
 * make PixelPerfect.options contain integer for numeric options (not string)
 * check prefixes (border-radius is not prefixed on ms and o, etc.)

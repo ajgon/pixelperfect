@@ -11,6 +11,7 @@ var $ = function (selector, parentElement, caching) {
     return new Collection(selector, parentElement, caching);
 };
 window.$ = $;
+window.PP = PixelPerfect;
 
 window.onload = function () {
     PrefixedProperties.init();

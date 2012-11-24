@@ -1,27 +1,28 @@
 /*jslint browser: true, sloppy: true */
 /*global $, DragAndDrop, Layers, PP */
 /*properties
- B, C, DEFAULTS, DOWN, F, HTML, L, M, O, R, STYLES, T, U, UP, X, Y, '^<',
+ B, C, DEFAULTS, DOM, DOWN, F, HTML, L, M, O, R, STYLES, T, U, UP, X, Y, '^<',
  '^>', '^?', '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]',
  active, addClass, addEventListener, align, animate, appendChild,
  applyOptions, arrowEvent, attributes, bind, body, call, catchFile, charCode,
- checked, className, click, clientHeight, createElement, ctrlKey, defaultView,
- display, elements, event, every, files, fillSelected, focus, getAttribute,
+ checked, className, click, clientHeight, content, createElement, ctrlKey, defaultView,
+ display, elements, event, every, fileinput, file, files, fillSelected, focus, getAttribute,
  getComputedStyle, getElementById, getItem, handler, hasOwnProperty, head,
  height, help, hidden, init, initFileHandling, initHTML, initInterfaceEvents,
  initKeyEvents, initOptions, initStyles, initWrapper, innerHTML, innerHeight,
  innerWidth, insertLayer, keyCode, keys, layers, left, makeDraggable, margin,
  match, max, maxHeight, min, minHeight, minimized, name, next, onDrop,
- opacity, options, overflow, overlay, position, preventDefault, previous,
- readFile, refreshInterface, refreshOptions, refreshOverlay, remember, remove,
- removeClass, removeLayer, replace, round, setAttribute, setByIndex,
- setDefaults, setItem, setOpacity, setParam, split, src, storeOptions, style,
- target, toString, toggleClass, top, updateOptions, value, visible, which,
- width, wrapper, x, y, zIndex
+ opacity, 'opacity-range', 'opacity-over', options, overflow, overlay, 'overlay-below',
+ 'overlay-over', position, preventDefault, previous, readFile, refreshInterface,
+ refreshOptions, refreshOverlay, remember, remove, removeClass, removeLayer, replace,
+ round, self, setAttribute, setByIndex, setDefaults, setItem, setOpacity, setParam,
+ split, src, storeOptions, style, target, toString, toggleClass, top, updateOptions,
+ value, visible, which, width, wrapper, x, y, zIndex
  */
 var PixelPerfect = {
     STYLES: '##CSS_BASE64##',
     HTML: '##HTML##',
+    DOM: {},
     DEFAULTS: {
         overlay: 'below',
         opacity: '50',
@@ -54,20 +55,23 @@ var PixelPerfect = {
         help.elements[0].visible = !help.elements[0].visible;
     },
     refreshOverlay: function (layer_id) {
-        var overlay;
+        var overlay, self = this;
 
         if (layer_id !== undefined) {
             $('#pixelperfect-overlay').remove();
             overlay = new Image();
             overlay.src = localStorage.getItem(layer_id);
             overlay.setAttribute('id', 'pixelperfect-overlay');
+            if(!this.options.active) {
+                overlay.style.display = 'none';
+            }
             document.body.appendChild(overlay);
             DragAndDrop.makeDraggable($(overlay), {
                 remember: false,
                 onDrop: function () {
-                    PixelPerfect.options.position.x = parseInt(this.style.left, 10);
-                    PixelPerfect.options.position.y = parseInt(this.style.top, 10);
-                    PixelPerfect.refreshInterface.call(PixelPerfect);
+                    self.options.position.x = parseInt(this.style.left, 10);
+                    self.options.position.y = parseInt(this.style.top, 10);
+                    self.refreshInterface.call(self);
                 }
             });
         } else {
@@ -88,6 +92,10 @@ var PixelPerfect = {
             overlay.style.zIndex = '2147483645';
         }
 
+        if(!this.options.active) {
+            $('body > .pixelperfect-wrapper').setOpacity(100);
+        }
+
         overlay.style.left = this.options.position.x + 'px';
         overlay.style.top = this.options.position.y + 'px';
         this.updateOptions();
@@ -95,27 +103,28 @@ var PixelPerfect = {
 
     refreshInterface: function () {
         var maxHeight, layers = $('#pixelperfect #pixelperfect-layers').elements[0],
-            layerHeight;
+            layerHeight, overlay, self = this;
         if (this.options.minimized) {
-            document.getElementById('pixelperfect-content').style.display = 'none';
+            this.DOM.content.style.display = 'none';
         } else {
-            document.getElementById('pixelperfect-content').style.display = 'block';
+            this.DOM.content.style.display = 'block';
         }
         $('#pixelperfect-minimized').toggleClass('pixelperfect-button-active', this.options.minimized);
 
         if (this.options.hidden) {
-            $('#pixelperfect-hidden').addClass('pixelperfect-button-active');
+            this.DOM.self.style.display = 'none';
         } else {
-            $('#pixelperfect-hidden').removeClass('pixelperfect-button-active');
+            this.DOM.self.style.display = 'block';
         }
 
-        if (document.getElementById('pixelperfect-overlay')) {
+        overlay = document.getElementById('pixelperfect-overlay');
+
+        if (overlay) {
             if (this.options.active) {
-                document.getElementById('pixelperfect-overlay').style.display = 'block';
+                overlay.style.display = 'block';
                 this.refreshOverlay();
             } else {
-                document.getElementById('pixelperfect-overlay').style.display = 'none';
-                $('body > .pixelperfect-wrapper').setOpacity(100);
+                overlay.style.display = 'none';
             }
         }
         $('#pixelperfect-active').toggleClass('pixelperfect-button-active', this.options.active);
@@ -126,30 +135,30 @@ var PixelPerfect = {
         setTimeout(function () {
             var fileDropItem = $('#pixelperfect #pixelperfect-drop-file').elements[0];
             layerHeight = fileDropItem ? fileDropItem.clientHeight : 0;
-            maxHeight = window.innerHeight - document.getElementById('pixelperfect').clientHeight - 40 + layers.clientHeight;
+            maxHeight = window.innerHeight - self.DOM.self.clientHeight - 40 + layers.clientHeight;
             layers.style.maxHeight = Math.max(layerHeight, maxHeight).toString() + 'px';
         }, 40);
     },
 
     refreshOptions: function () {
-        PixelPerfect.applyOptions();
-        PixelPerfect.storeOptions();
-        PixelPerfect.refreshOverlay();
+        this.applyOptions();
+        this.storeOptions();
+        this.refreshOverlay();
     },
 
     updateOptions: function () {
-        document.getElementById('pixelperfect-overlay-' + this.options.overlay).checked = true;
-        document.getElementById('pixelperfect-opacity').value = this.options.opacity;
-        document.getElementById('pixelperfect-opacity-range').value = this.options.opacity;
-        document.getElementById('pixelperfect-x').value = this.options.position.x;
-        document.getElementById('pixelperfect-y').value = this.options.position.y;
+        this.DOM['overlay-' + this.options.overlay].checked = true;
+        this.DOM.opacity.value = this.options.opacity;
+        this.DOM['opacity-range'].value = this.options.opacity;
+        this.DOM.x.value = this.options.position.x;
+        this.DOM.y.value = this.options.position.y;
     },
 
     applyOptions: function () {
-        this.options.overlay = document.getElementById('pixelperfect-overlay-over').checked ? 'over' : 'below';
-        this.options.opacity = document.getElementById('pixelperfect-opacity').value;
-        this.options.position.x = (parseInt(document.getElementById('pixelperfect-x').value, 10) || 0).toString();
-        this.options.position.y = (parseInt(document.getElementById('pixelperfect-y').value, 10) || 0).toString();
+        this.options.overlay = this.DOM['overlay-over'].checked ? 'over' : 'below';
+        this.options.opacity = this.DOM.opacity.value;
+        this.options.position.x = (parseInt(this.DOM.x.value, 10) || 0).toString();
+        this.options.position.y = (parseInt(this.DOM.y.value, 10) || 0).toString();
     },
 
     storeOptions: function () {
@@ -206,14 +215,14 @@ var PixelPerfect = {
         }
 
         if (x !== false) {
-            document.getElementById('pixelperfect-x').value = x;
+            this.DOM.x.value = x;
         }
 
         if (y !== false) {
-            document.getElementById('pixelperfect-y').value = y;
+            this.DOM.y.value = y;
         }
 
-        PixelPerfect.refreshOptions();
+        this.refreshOptions();
     },
 
     initOptions: function () {
@@ -236,14 +245,15 @@ var PixelPerfect = {
     },
 
     initFileHandling: function () {
+        var self = this;
         $('#pixelperfect-upload-file').event('click', function (e) {
             e.preventDefault();
-            document.getElementById('pixelperfect-fileinput').click();
+            self.DOM.fileinput.click();
         });
         $('#pixelperfect-fileinput').event('change', function (e) {
             e.preventDefault();
             Layers.readFile(e.target.files[0]);
-        }.bind(this));
+        });
         $('#pixelperfect-file').event('keypress', function (e) {
             if (e.keyCode === 13 || e.charCode === 13) {
                 Layers.insertLayer(this.elements[0].value);
@@ -291,21 +301,26 @@ var PixelPerfect = {
         this.wrapper = wrapper;
 
         adjustWrapper = function () {
-            this.wrapper.style.minHeight = window.innerHeight.toString() + 'px';
-        }.bind(this);
+            wrapper.style.minHeight = window.innerHeight.toString() + 'px';
+        };
         adjustWrapper();
 
         window.addEventListener('resize', adjustWrapper);
     },
 
     initHTML: function () {
-        var pixelperfect = document.createElement('div'), help;
+        var pixelperfect = document.createElement('div'), help, self = this;
         pixelperfect.setAttribute('id', 'pixelperfect');
         pixelperfect.innerHTML = this.HTML;
         document.body.appendChild(pixelperfect);
         help = document.getElementById('pixelperfect-help-popup');
         document.body.appendChild(help);
         help.visible = false;
+        this.DOM.self = pixelperfect;
+        $('#pixelperfect [id]').elements.every(function(element) {
+            self.DOM[element.getAttribute('id').replace(/^pixelperfect-/, '')] = element;
+            return true;
+        });
     },
 
     initStyles: function () {
@@ -318,17 +333,18 @@ var PixelPerfect = {
     },
 
     initInterfaceEvents: function () {
+        var self = this;
         $('#pixelperfect-overlay-over, #pixelperfect-overlay-below, #pixelperfect-opacity, #pixelperfect-x, #pixelperfect-y').event('change', function () {
 
-            document.getElementById('pixelperfect-opacity-range').value = document.getElementById('pixelperfect-opacity').value;
-            this.applyOptions.call(this);
-            this.storeOptions.call(this);
-            this.refreshOverlay.call(this);
-        }.bind(this));
+            self.DOM['opacity-range'].value = self.DOM.opacity.value;
+            self.applyOptions();
+            self.storeOptions();
+            self.refreshOverlay();
+        });
         $('#pixelperfect-aligns > .pixelperfect-button').event('click', function (e) {
             e.preventDefault();
 
-            PixelPerfect.align(this.elements[0].getAttribute('id').replace(/pixelperfect-[a-z]+-/, ''));
+            self.align(this.elements[0].getAttribute('id').replace(/pixelperfect-[a-z]+-/, ''));
         });
 
         $('#pixelperfect-top > .pixelperfect-button').event('click', function (e) {
@@ -336,17 +352,17 @@ var PixelPerfect = {
             e.preventDefault();
 
             if (option === 'help') {
-                PixelPerfect.help();
+                self.help();
             } else {
-                PixelPerfect.options[option] = !PixelPerfect.options[option];
-                PixelPerfect.refreshInterface();
+                self.options[option] = !self.options[option];
+                self.refreshInterface();
             }
         });
 
         $('#pixelperfect-opacity-range').event('change', function () {
-            document.getElementById('pixelperfect-opacity').value = this.elements[0].value;
-            PixelPerfect.applyOptions();
-            PixelPerfect.refreshInterface();
+            self.DOM.opacity.value = this.elements[0].value;
+            self.applyOptions();
+            self.refreshInterface();
         });
     },
     setParam: function (item, value) {
@@ -360,11 +376,10 @@ var PixelPerfect = {
             value = Math.max(parseInt(item.elements[0].getAttribute('data-min'), 10), value);
         }
         item.elements[0].value = value;
-        PixelPerfect.refreshOptions();
-
+        this.refreshOptions();
     },
     initKeyEvents: function () {
-        var overlayMode = false, positionMode = false, alignMode = false, fileMode = false;
+        var overlayMode = false, positionMode = false, alignMode = false, fileMode = false, self = this;
         $('#pixelperfect-opacity, #pixelperfect-x, #pixelperfect-y').event(PP.keys.arrowEvent, function (e) {
             var newValue = parseInt(this.elements[0].value, 10),
                 which = e.which === 0 ? e.keyCode : e.which;
@@ -376,7 +391,7 @@ var PixelPerfect = {
                 e.preventDefault();
                 newValue = newValue + (which === PP.keys.UP ? 1 : -1);
             }
-            PixelPerfect.setParam(this, newValue);
+            self.setParam(this, newValue);
         });
 
         $(document).event(PP.keys.event, function (e) {
@@ -384,11 +399,11 @@ var PixelPerfect = {
             // overlay
             // over [ O ]
             if (overlayMode && !e.ctrlKey && e.which === PP.keys.O) {
-                overlayRadio = document.getElementById('pixelperfect-overlay-over');
+                overlayRadio = self.DOM['overlay-over'];
             }
             // below [ B ]
             if (overlayMode && !e.ctrlKey && e.which === PP.keys.B) {
-                overlayRadio = document.getElementById('pixelperfect-overlay-below');
+                overlayRadio = self.DOM['overlay-below'];
             }
             if (overlayRadio) {
                 overlayRadio.setAttribute('checked', 'checked');
@@ -401,11 +416,11 @@ var PixelPerfect = {
             // position
             // x [ X ]
             if (positionMode && !e.ctrlKey && e.which === PP.keys.X) {
-                document.getElementById('pixelperfect-x').focus();
+                self.DOM.x.focus();
             }
             // y [ Y ]
             if (positionMode && !e.ctrlKey && e.which === PP.keys.Y) {
-                document.getElementById('pixelperfect-y').focus();
+                self.DOM.y.focus();
             }
             if (e.which !== 17) {
                 positionMode = (e.ctrlKey && e.which === PP.keys['^P']);
@@ -413,27 +428,27 @@ var PixelPerfect = {
             // align
             // left [ L ]
             if (alignMode && !e.ctrlKey && e.which === PP.keys.L) {
-                PixelPerfect.align('left');
+                self.align('left');
             }
             // center [ C ]
             if (alignMode && !e.ctrlKey && e.which === PP.keys.C) {
-                PixelPerfect.align('center');
+                self.align('center');
             }
             // right [ R ]
             if (alignMode && !e.ctrlKey && e.which === PP.keys.R) {
-                PixelPerfect.align('right');
+                self.align('right');
             }
             // top [ T ]
             if (alignMode && !e.ctrlKey && e.which === PP.keys.T) {
-                PixelPerfect.align('top');
+                self.align('top');
             }
             // middle [ M ]
             if (alignMode && !e.ctrlKey && e.which === PP.keys.M) {
-                PixelPerfect.align('middle');
+                self.align('middle');
             }
             // bottom [ B ]
             if (alignMode && !e.ctrlKey && e.which === PP.keys.B) {
-                PixelPerfect.align('bottom');
+                self.align('bottom');
             }
             if (e.which !== 17) {
                 alignMode = (e.ctrlKey && e.which === PP.keys['^A']);
@@ -442,13 +457,13 @@ var PixelPerfect = {
             // file
             // upload [ F ]
             if (fileMode && !e.ctrlKey && e.which === PP.keys.F) {
-                if (document.getElementById('pixelperfect-fileinput')) {
-                    document.getElementById('pixelperfect-fileinput').click();
+                if (self.DOM.fileinput) {
+                    self.DOM.fileinput.click();
                 }
             }
             // URL [ U ]
             if (fileMode && !e.ctrlKey && e.which === PP.keys.U) {
-                document.getElementById('pixelperfect-file').focus();
+                self.DOM.file.focus();
             }
             if (e.which !== 17) {
                 fileMode = (e.ctrlKey && e.which === PP.keys['^F']);
@@ -475,15 +490,15 @@ var PixelPerfect = {
             // opacity
             // focus on input [ T ]
             if (e.ctrlKey && e.which === PP.keys['^T']) {
-                document.getElementById('pixelperfect-opacity').focus();
+                self.DOM.opacity.focus();
             }
             // increase [ > ]
             if (e.ctrlKey && e.which === PP.keys['^>']) {
-                PixelPerfect.setParam('opacity', parseInt(PixelPerfect.options.opacity, 10) + 1);
+                self.setParam('opacity', parseInt(self.options.opacity, 10) + 1);
             }
             // decrease [ < ]
             if (e.ctrlKey && e.which === PP.keys['^<']) {
-                PixelPerfect.setParam('opacity', PixelPerfect.options.opacity - 1);
+                self.setParam('opacity', self.options.opacity - 1);
             }
 
             // hide [ H ]
@@ -501,15 +516,15 @@ var PixelPerfect = {
                     option = 'active';
                     break;
                 }
-                PixelPerfect.options[option] = !PixelPerfect.options[option];
-                PixelPerfect.refreshInterface();
+                self.options[option] = !self.options[option];
+                self.refreshInterface();
             }
 
             // help [ ? ]
             if (e.ctrlKey && e.which === PP.keys['^?']) {
-                PixelPerfect.help();
+                self.help();
             }
-            //PixelPerfect.refreshOptions();
+            self.refreshOptions();
         });
     },
 

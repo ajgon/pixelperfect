@@ -72,11 +72,11 @@ var Hacks = {
                 e.stopPropagation();
 
                 range.value = Math.round((Math.max(0, Math.min(100, (e.pageX - range.offsetLeft - container.offsetLeft - 10) / range.clientWidth * 100 + 10))));
-                this.style.top = '-4px';
+                this.style.top = '-7px';
                 this.style.left = range.value.toString() + '%';
                 range.elements = [range];
                 range.events.change.call(range);
-            }.bind(slider);
+            };
 
 
             $(range).event('click', adjustSlider);
@@ -87,8 +87,8 @@ var Hacks = {
             });
 
             setInterval(function () {
-                this.firstChild.style.left = this.value + '%';
-            }.bind(document.getElementById('pixelperfect-opacity-range')), 50);
+                range.firstChild.style.left = range.value + '%';
+            }, 50);
         }
     },
     // http://caniuse.com/filereader

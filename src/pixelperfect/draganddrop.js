@@ -20,7 +20,7 @@ var DragAndDrop = {
      * @param {Object} options
      */
     makeDraggable: function (collection, options) {
-        var e;
+        var i, element, mouseDown, self = this;
 
         if (options === undefined) {
             options = {};
@@ -34,18 +34,23 @@ var DragAndDrop = {
             onMove: (options.onMove === undefined ? function () {} : options.onMove)
         };
 
-        for (e = 0; e < collection.elements_length; e += 1) {
+        mouseDown = function(e) {
+            self.catchHandlerEvent.call(element, e);
+        };
+
+        for (i = 0; i < collection.elements_length; i += 1) {
             if (!options.handler) {
-                options.handler = collection.elements[e];
+                options.handler = collection.elements[i];
             } else {
-                options.handler = collection.elements[e].querySelector(options.handler);
+                options.handler = collection.elements[i].querySelector(options.handler);
                 if (!options.handler) {
-                    options.handler = collection.elements[e];
+                    options.handler = collection.elements[i];
                 }
             }
 
-            collection.elements[e].options = options;
-            options.handler.addEventListener('mousedown', this.catchHandlerEvent.bind(collection.elements[e]));
+            collection.elements[i].options = options;
+            element = collection.elements[i];
+            options.handler.addEventListener('mousedown', mouseDown);
             options.handler.draggable = true;
 
         }
