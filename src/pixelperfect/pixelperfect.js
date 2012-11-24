@@ -3,21 +3,22 @@
 /*properties
  B, C, DEFAULTS, DOM, DOWN, F, HTML, L, M, O, R, STYLES, T, U, UP, X, Y, '^<',
  '^>', '^?', '^A', '^F', '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]',
- active, addClass, addEventListener, align, animate, appendChild,
- applyOptions, arrowEvent, attributes, bind, body, call, catchFile, charCode,
- checked, className, click, clientHeight, content, createElement, ctrlKey, defaultView,
- display, elements, event, every, fileinput, file, files, fillSelected, focus, getAttribute,
- getComputedStyle, getElementById, getItem, handler, hasOwnProperty, head,
- height, help, hidden, init, initFileHandling, initHTML, initInterfaceEvents,
- initKeyEvents, initOptions, initStyles, initWrapper, innerHTML, innerHeight,
- innerWidth, insertLayer, keyCode, keys, layers, left, makeDraggable, margin,
- match, max, maxHeight, min, minHeight, minimized, name, next, onDrop,
- opacity, 'opacity-range', 'opacity-over', options, overflow, overlay, 'overlay-below',
- 'overlay-over', position, preventDefault, previous, readFile, refreshInterface,
- refreshOptions, refreshOverlay, remember, remove, removeClass, removeLayer, replace,
- round, self, setAttribute, setByIndex, setDefaults, setItem, setOpacity, setParam,
- split, src, storeOptions, style, target, toString, toggleClass, top, updateOptions,
- value, visible, which, width, wrapper, x, y, zIndex
+ active, addEventListener, align, animate, appendChild, applyOptions,
+ arrowEvent, attributes, body, call, catchFile, charCode, checked, className,
+ click, clientHeight, content, createElement, ctrlKey, defaultView, display,
+ elements, event, every, file, fileinput, files, fillSelected, focus,
+ getAttribute, getComputedStyle, getElementById, getItem, handler,
+ hasOwnProperty, head, height, help, hidden, init, initFileHandling, initHTML,
+ initInterfaceEvents, initKeyEvents, initOptions, initStyles, initWrapper,
+ innerHTML, innerHeight, innerWidth, insertLayer, keyCode, keys, layers, left,
+ makeDraggable, margin, match, max, maxHeight, min, minHeight, minimized,
+ name, next, onDrop, opacity, 'opacity-range', options, overflow, overlay,
+ 'overlay-below', 'overlay-over', position, preventDefault, previous,
+ readFile, refreshInterface, refreshOptions, refreshOverlay, remember, remove,
+ removeLayer, replace, round, self, setAttribute, setByIndex, setDefaults,
+ setItem, setOpacity, setParam, split, src, storeOptions, style, target,
+ toString, toggleClass, top, updateOptions, value, visible, which, width,
+ wrapper, x, y, zIndex
  */
 var PixelPerfect = {
     STYLES: '##CSS_BASE64##',
@@ -62,7 +63,7 @@ var PixelPerfect = {
             overlay = new Image();
             overlay.src = localStorage.getItem(layer_id);
             overlay.setAttribute('id', 'pixelperfect-overlay');
-            if(!this.options.active) {
+            if (!this.options.active) {
                 overlay.style.display = 'none';
             }
             document.body.appendChild(overlay);
@@ -92,7 +93,7 @@ var PixelPerfect = {
             overlay.style.zIndex = '2147483645';
         }
 
-        if(!this.options.active) {
+        if (!this.options.active) {
             $('body > .pixelperfect-wrapper').setOpacity(100);
         }
 
@@ -317,7 +318,7 @@ var PixelPerfect = {
         document.body.appendChild(help);
         help.visible = false;
         this.DOM.self = pixelperfect;
-        $('#pixelperfect [id]').elements.every(function(element) {
+        $('#pixelperfect [id]').elements.every(function (element) {
             self.DOM[element.getAttribute('id').replace(/^pixelperfect-/, '')] = element;
             return true;
         });

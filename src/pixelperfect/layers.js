@@ -1,14 +1,14 @@
 /*jslint browser: true, sloppy: true */
 /*global $, PixelPerfect */
 /*properties
- FileReader, addClass, addToList, appendChild, appendLayer, bind, call,
- charCodeAt, className, createElement, elements, elements_length, event,
- fillSelected, getAttribute, getItem, getSelected, hasOwnProperty, hash,
- indexOf, init, innerHTML, insertLayer, join, length, list, match, next,
- nextSibling, onload, parentNode, preventDefault, previous, previousSibling,
- push, readAsDataURL, readFile, refresh, refreshOverlay, remove, removeClass,
- removeFromList, removeItem, removeLayer, result, selectLayer, setAttribute,
- setByIndex, setItem, splice, split, src, target, toString
+ FileReader, addClass, addToList, appendChild, appendLayer, call, charCodeAt,
+ className, createElement, elements, elements_length, event, fillSelected,
+ getAttribute, getItem, getSelected, hasOwnProperty, hash, indexOf, init,
+ innerHTML, insertLayer, join, length, list, match, next, nextSibling, onload,
+ parentNode, preventDefault, previous, previousSibling, push, readAsDataURL,
+ readFile, refresh, refreshOverlay, remove, removeClass, removeFromList,
+ removeItem, removeLayer, result, selectLayer, setAttribute, setByIndex,
+ setItem, splice, split, src, target, toString
  */
 var Layers = {
     list: [],

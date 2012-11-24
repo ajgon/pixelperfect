@@ -1,0 +1,43 @@
+OVERLAY: Overlay
+OVER: Over
+BELOW: Below
+OPACITY: Opacity
+POSITION: Position
+POSITIONX: X
+POSITIONY: Y
+ALIGN: Align
+ALIGNB: B
+ALIGNM: M
+ALIGNT: T
+ALIGNR: R
+ALIGNC: C
+ALIGNL: L
+FILE: File
+DROP_A_FILE_HERE: Drop a file here...
+SHORTCUT_KEYS: Shortcut keys
+SHOW_THIS_HELP: Show this help
+SHOWHIDE_OVERLAY: Show/hide overlay
+MINIMIZEREVERT_PIXELPERFECT: Minimize/Revert PixelPerfect
+SHOWHIDE_PIXELPERFECT: Show/Hide PixelPerfect
+OVERLAY_FRONT: Bring Overlay to front (over HTML)
+OVERLAY_BACK: Bring Overlay to back (behind HTML)
+FOCUS_ON_X: Focus on X position input
+FOCUS_ON_Y: Focus on Y position input
+FILE_HANDLING: File handling
+FOCUS_ON_URL: Focus on URL input
+SHOW_UPLOAD: Bring up file upload dialog
+ALIGNMENT: Alignment
+ALIGN_LEFT: Horizontally align overlay left
+ALIGN_CENTER: Horizontally align overlay center
+ALIGN_RIGHT: Horizontally align overlay right
+ALIGN_TOP: Vertically align overlay top
+ALIGN_MIDDLE: Vertically align overlay middle
+ALIGN_BOTTOM: Vertically align overlay bottom
+OPACITY_INPUT: Focus on opacity input
+OPACITY_DECREASE: Decrease opacity
+OPACITY_INCREASE: Increase opacity
+LAYERS: Layers
+SPECIFIC_LAYER: Switch to specified layer
+PREVIOUS_LAYER: Switch to previous layer
+NEXT_LAYER: Switch to next layer
+REMOVE_LAYER: Remove active layer

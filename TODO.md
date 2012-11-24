@@ -17,8 +17,9 @@
 * browser snippet (bookmark)
 * browsers support
 * document code
-* translations
+* ~~translations~~
 * remember options for each layer separately
+* add 'URL...' placeholder to input
 
 ## Clean code
 * ~~move document.getElementById('pixelperfect') to PixelPerfect.container~~

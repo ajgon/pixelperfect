@@ -7,7 +7,7 @@
  */
 /*jslint browser: true, sloppy: true */
 /*properties
- addClass, addEventListener, animate, bind, call, className, clientHeight,
+ addClass, addEventListener, animate, call, className, clientHeight,
  clientWidth, elements, elements_length, event, events, every, hasOwnProperty,
  innerHeight, innerWidth, left, length, nodeName, opacity, parentNode,
  prototype, push, querySelectorAll, remove, removeChild, removeClass, replace,
@@ -78,7 +78,7 @@ Collection.prototype = {
     event: function (name, callback) {
         this.elements.every(function (element) {
             var collection = new Collection(element);
-            element.addEventListener(name, function(e) {
+            element.addEventListener(name, function (e) {
                 callback.call(collection, e);
             });
             if (element.events === undefined) {

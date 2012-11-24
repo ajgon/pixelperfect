@@ -1,0 +1,43 @@
+OVERLAY: Podgląd
+OVER: Nad
+BELOW: Pod
+OPACITY: Przeźr.
+POSITION: Pozycja
+POSITIONX: X
+POSITIONY: Y
+ALIGN: Wyrówn.
+ALIGNB: D
+ALIGNM: Ś
+ALIGNT: G
+ALIGNR: P
+ALIGNC: C
+ALIGNL: L
+FILE: Plik
+DROP_A_FILE_HERE: Upuść plik tutaj...
+SHORTCUT_KEYS: Klawisze skrótu
+SHOW_THIS_HELP: Pokaż ten ekran
+SHOWHIDE_OVERLAY: Pokaż/Ukryj podgląd
+MINIMIZEREVERT_PIXELPERFECT: Zminimalizuj/przywróć PixelPerfect
+SHOWHIDE_PIXELPERFECT: Pokaż/Ukryj PixelPerfect
+OVERLAY_FRONT: Przenieś podgląd na wierzch (nad HTML)
+OVERLAY_BACK: Przenieś podgląd pod spód (pod HTML)
+FOCUS_ON_X: Aktywuj pole wartości X
+FOCUS_ON_Y: Aktywuj pole wartości Y
+FILE_HANDLING: Obsługa plików
+FOCUS_ON_URL: Aktywuj pole wartości URL
+SHOW_UPLOAD: Uruchom okienko wgrywania plików
+ALIGNMENT: Wyrównanie
+ALIGN_LEFT: Wyrównaj do lewej
+ALIGN_CENTER: Wyrównaj do środka horyzontalnie
+ALIGN_RIGHT: Wyrównaj do prawej
+ALIGN_TOP: Wyrównaj do góry
+ALIGN_MIDDLE: Wyrównaj do środka wertykalnie
+ALIGN_BOTTOM: Wyrównaj do spodu
+OPACITY_INPUT: Aktywuj pole wartości przeźroczystości
+OPACITY_DECREASE: Zmniejsz przeźroczystość
+OPACITY_INCREASE: Zwiększ przeźroczystość
+LAYERS: Warstwy
+SPECIFIC_LAYER: Włącz konkretną warstwę
+PREVIOUS_LAYER: Włącz poprzednią warstwę
+NEXT_LAYER: Włącz następną warstwę
+REMOVE_LAYER: Usuń aktywną warstwę

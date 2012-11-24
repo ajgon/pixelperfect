@@ -4,7 +4,7 @@
 /*jslint browser: true, sloppy: true */
 /*global Layers */
 /*properties
- addEventListener, bind, bottom, call, catchFile, catchFileDragEvent,
+ addEventListener, bottom, call, catchFile, catchFileDragEvent,
  catchFileDropEvent, catchHandlerEvent, className, currentDragged,
  dataTransfer, draggable, elements, elements_length, files, getAttribute,
  getElementById, getItem, handler, hasOwnProperty, init, left, length,
@@ -34,7 +34,7 @@ var DragAndDrop = {
             onMove: (options.onMove === undefined ? function () {} : options.onMove)
         };
 
-        mouseDown = function(e) {
+        mouseDown = function (e) {
             self.catchHandlerEvent.call(element, e);
         };
 

@@ -12,8 +12,12 @@ def closure js
   "(function() {\n    \"use strict\";\n#{js}\n}());"
 end
 
-def get_html file
-  File.read(File.join(File.dirname(__FILE__), 'src', file)).gsub(/>\s+</, '><').strip
+def get_html file, translations
+  html = File.read(File.join(File.dirname(__FILE__), 'src', file)).gsub(/>\s+</, '><').strip
+  translations.each_pair do |key, translation|
+    html.gsub!('##' + key.upcase + '##', translation)
+  end
+  html
 end
 
 def jslint
@@ -45,13 +49,21 @@ def jslint
 
 end
 
-def build type = :production
+def build type = :production, lang = nil
   require 'sprockets'
   require 'uglifier'
   require 'yui/compressor'
   require 'base64'
+  require 'yaml'
   sprockets = Sprockets::Environment.new(File.dirname(__FILE__))
   sprockets.append_path 'src/'
+  lang = lang.nil? ? 'en' : lang
+  begin
+    translations = YAML.load_file(File.join(File.dirname(__FILE__), 'src', 'lang', lang.to_s.downcase + '.yml'))
+  rescue
+    puts "Language '#{lang}' does not exists!"
+    return
+  end
 
   # Build CSS
   css = sprockets.find_asset('pixelperfect.css.scss').to_s
@@ -62,7 +74,7 @@ def build type = :production
   js = js.gsub(/\/\*jslint.*?[^e]\*\//, '').gsub(/\/\*(global|properties).*?\*\//m, '').gsub(/\/\/.*?\n/, '') if type == :lint
 
   js.sub!('##CSS_BASE64##', Base64.strict_encode64(css))
-  js.sub!('##HTML##', get_html('pixelperfect.html'))
+  js.sub!('##HTML##', get_html('pixelperfect.html', translations))
 
   js = Uglifier.compile(js) if type == :production
 
@@ -78,13 +90,13 @@ desc "Build pixelperfect"
 task :build do
   jslint_ok = jslint
   if jslint_ok
-    build :lint
+    build :lint, ENV['LANG']
     print "Running JSLint on built non-uglified file... "
     output = `jslint dist/pixelperfect.js`
     if $? == 0
       puts "OK"
       puts "Building uglified file, ready for production"
-      build
+      build :production, ENV['LANG']
     else
       puts "FAILED"
       puts output
@@ -94,7 +106,7 @@ end
 
 desc "Build pixelperfect but don't uglify JavaScript"
 task :build_dev do
-  build :development
+  build :development, ENV['LANG']
 end
 
 desc "Test all javascript files with jslint"

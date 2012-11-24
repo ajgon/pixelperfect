@@ -1,5 +1,15 @@
 /*jslint browser: true, sloppy: true */
 /*global $, DragAndDrop, PrefixedProperties */
+/*properties
+ B, C, F, FileReader, L, M, O, R, T, U, X, Y, '^<', '^>', '^?', '^A', '^F',
+ '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]', appendChild,
+ arrowEvent, call, change, className, clientWidth, createElement, elements,
+ event, events, firstChild, getElementById, hasOwnProperty, insertBefore,
+ keys, left, makeDraggable, match, max, min, offsetLeft, onMove, opera, pageX,
+ parentNode, postLoad, post_FileReader, post_opacityRange, preLoad,
+ pre_keyCodes, preventDefault, remember, remove, removeChild, round,
+ setAttribute, stopPropagation, style, toString, top, type, userAgent, value
+ */
 var Hacks = {
     // keyboard handling on browsers... this is madness!
     pre_keyCodes: function () {
