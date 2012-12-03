@@ -7,7 +7,7 @@
  */
 var PrefixedProperties = {
     vendors: ['ms', 'moz', 'webkit', 'o'],
-    cssProperties: ['transitionDuration'],
+    cssProperties: ['transitionDuration', 'transitionProperty'],
     keys: {
         event: 'keypress',
         arrowEvent: 'keydown',

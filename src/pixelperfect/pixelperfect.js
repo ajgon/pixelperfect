@@ -48,10 +48,10 @@ var PixelPerfect = {
     wrapper: null,
     help: function () {
         var help = $('#pixelperfect-help-popup');
+        help.elements[0].style.zIndex = (help.elements[0].visible ? -2147483647 : 2147483647);
         help.animate({
             opacity: (help.elements[0].visible ? 0 : 1)
         });
-        help.elements[0].style.zIndex = (help.elements[0].visible ? 2147483644 : 2147483647);
         $('#pixelperfect-help').toggleClass('pixelperfect-button-active', !help.elements[0].visible);
         help.elements[0].visible = !help.elements[0].visible;
     },
@@ -367,7 +367,7 @@ var PixelPerfect = {
         });
     },
     setParam: function (item, value) {
-        if (typeof (item) === 'string') {
+        if (typeof item === 'string') {
             item = $('#pixelperfect-' + item);
         }
         if (item.elements[0].getAttribute('data-max')) {

@@ -9,9 +9,10 @@
 /*properties
  addClass, addEventListener, animate, call, className, clientHeight,
  clientWidth, elements, elements_length, event, events, every, hasOwnProperty,
- innerHeight, innerWidth, left, length, nodeName, opacity, parentNode,
+ innerHeight, innerWidth, join, left, length, nodeName, opacity, parentNode,
  prototype, push, querySelectorAll, remove, removeChild, removeClass, replace,
- setOpacity, style, toString, toggleClass, top, transitionDuration
+ setOpacity, style, toString, toggleClass, top, transitionDuration,
+ transitionProperty
  */
 /*global PP */
 var Collection = function (selector, parentElement, caching) {
@@ -28,7 +29,7 @@ var Collection = function (selector, parentElement, caching) {
         return this;
     }
 
-    if (typeof (parentElement) === 'boolean') {
+    if (typeof parentElement === 'boolean') {
         caching = parentElement;
         parentElement = undefined;
     }
@@ -133,7 +134,7 @@ Collection.prototype = {
     animate: function (properties, duration) {
         if (duration === undefined) { duration = 500; }
         this.elements.every(function (element) {
-            var p;
+            var p, props = [];
 
             if (properties.top) {
                 switch (properties.top) {
@@ -173,9 +174,12 @@ Collection.prototype = {
 
             for (p in properties) {
                 if (properties.hasOwnProperty(p)) {
+                    props.push(p);
                     element.style[p] = properties[p];
                 }
             }
+
+            element.style[PP.transitionProperty] = props.join(' ');
 
         });
     }
