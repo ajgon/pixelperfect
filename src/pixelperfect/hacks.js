@@ -2,13 +2,15 @@
 /*global $, DragAndDrop, PrefixedProperties */
 /*properties
  B, C, F, FileReader, L, M, O, R, T, U, X, Y, '^<', '^>', '^?', '^A', '^F',
- '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]', appendChild,
- arrowEvent, call, change, className, clientWidth, createElement, elements,
- event, events, firstChild, getElementById, hasOwnProperty, insertBefore,
- keys, left, makeDraggable, match, max, min, offsetLeft, onMove, opera, pageX,
- parentNode, postLoad, post_FileReader, post_opacityRange, preLoad,
+ '^H', '^M', '^O', '^P', '^R', '^T', '^X', '^[', '^]', addEventListener,
+ appendChild, arrowEvent, call, change, className, clientWidth, color,
+ createElement, elements, event, events, firstChild, getAttribute,
+ getElementById, hasOwnProperty, insertBefore, keys, left, makeDraggable,
+ match, max, min, offsetLeft, onMove, opera, pageX, parentNode, placeholder,
+ postLoad, post_FileReader, post_inputPlaceholder, post_opacityRange, preLoad,
  pre_keyCodes, preventDefault, remember, remove, removeChild, round,
- setAttribute, stopPropagation, style, toString, top, type, userAgent, value
+ setAttribute, stopPropagation, style, target, toString, top, type, userAgent,
+ value
  */
 var Hacks = {
     // keyboard handling on browsers... this is madness!
@@ -52,6 +54,29 @@ var Hacks = {
             PrefixedProperties.keys['^['] = 219;
             PrefixedProperties.keys['^]'] = 221;
             PrefixedProperties.keys['^R'] = 82;
+        }
+    },
+    // http://caniuse.com/input-placeholder
+    post_inputPlaceholder: function () {
+        var placeholder;
+        if (document.createElement('input').placeholder === undefined) {
+            placeholder = document.getElementById('pixelperfect-file');
+            placeholder.addEventListener('focus', function (e) {
+                if (e.target.value === e.target.getAttribute('placeholder')) {
+                    e.target.value = '';
+                    e.target.style.color = null;
+                }
+            });
+            placeholder.addEventListener('blur', function (e) {
+                if (e.target.value === '') {
+                    e.target.value = e.target.getAttribute('placeholder');
+                    e.target.style.color = '#777777';
+                }
+            });
+            if (placeholder.value === '') {
+                placeholder.value = placeholder.getAttribute('placeholder');
+                placeholder.style.color = '#777777';
+            }
         }
     },
     // http://caniuse.com/input-range

@@ -13,6 +13,7 @@ ALIGNR: R
 ALIGNC: C
 ALIGNL: L
 FILE: File
+URLTOFILE: URL for ext. source...
 DROP_A_FILE_HERE: Drop a file here...
 SHORTCUT_KEYS: Shortcut keys
 SHOW_THIS_HELP: Show this help

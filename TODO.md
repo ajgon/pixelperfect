@@ -19,7 +19,7 @@
 * document code
 * ~~translations~~
 * ~~remember options for each layer separately~~
-* add 'URL...' placeholder to input
+* ~~add 'URL...' placeholder to input~~
 
 ## Clean code
 * ~~move document.getElementById('pixelperfect') to PixelPerfect.container~~
