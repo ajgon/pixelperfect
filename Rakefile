@@ -90,13 +90,13 @@ desc "Build pixelperfect"
 task :build do
   jslint_ok = jslint
   if jslint_ok
-    build :lint, ENV['LANG']
+    build :lint, ENV['LNG']
     print "Running JSLint on built non-uglified file... "
     output = `jslint dist/pixelperfect.js`
     if $? == 0
       puts "OK"
       puts "Building uglified file, ready for production"
-      build :production, ENV['LANG']
+      build :production, ENV['LNG']
     else
       puts "FAILED"
       puts output
@@ -106,7 +106,7 @@ end
 
 desc "Build pixelperfect but don't uglify JavaScript"
 task :build_dev do
-  build :development, ENV['LANG']
+  build :development, ENV['LNG']
 end
 
 desc "Test all javascript files with jslint"

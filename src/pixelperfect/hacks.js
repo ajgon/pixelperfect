@@ -82,8 +82,10 @@ var Hacks = {
                 e.stopPropagation();
 
                 range.value = Math.round((Math.max(0, Math.min(100, (e.pageX - range.offsetLeft - container.offsetLeft - 10) / range.clientWidth * 100 + 10))));
-                this.style.top = '-7px';
-                this.style.left = range.value.toString() + '%';
+                if (!this.elements) {
+                    this.style.top = '-7px';
+                    this.style.left = range.value.toString() + '%';
+                }
                 range.elements = [range];
                 range.events.change.call(range);
             };

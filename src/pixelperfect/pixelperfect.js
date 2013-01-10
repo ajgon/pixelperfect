@@ -7,7 +7,7 @@
  arrowEvent, attributes, body, call, catchFile, charCode, checked, className,
  click, clientHeight, content, createElement, ctrlKey, defaultView, display,
  elements, event, every, file, fileinput, files, fillSelected, focus,
- getAttribute, getComputedStyle, getElementById, getItem, handler,
+ getAttribute, getComputedStyle, getElementById, getItem, getOptions, handler,
  hasOwnProperty, head, height, help, hidden, init, initFileHandling, initHTML,
  initInterfaceEvents, initKeyEvents, initOptions, initStyles, initWrapper,
  innerHTML, innerHeight, innerWidth, insertLayer, keyCode, keys, layers, left,
@@ -25,21 +25,11 @@ var PixelPerfect = {
     HTML: '##HTML##',
     DOM: {},
     DEFAULTS: {
-        overlay: 'below',
-        opacity: '50',
-        position: {
-            x: 0,
-            y: 0
-        },
         minimized: false,
         hidden: false,
         active: true
     },
     options: {
-        overlay: false,
-        opacity: false,
-        position: false,
-        align: false,
         minimized: false,
         hidden: false,
         active: false
@@ -56,9 +46,9 @@ var PixelPerfect = {
         help.elements[0].visible = !help.elements[0].visible;
     },
     refreshOverlay: function (layer_id) {
-        var overlay, self = this;
-
+        var overlay, self = this, layerOptions = false;
         if (layer_id !== undefined) {
+            layerOptions = Layers.getOptions(layer_id);
             $('#pixelperfect-overlay').remove();
             overlay = new Image();
             overlay.src = localStorage.getItem(layer_id);
@@ -70,8 +60,10 @@ var PixelPerfect = {
             DragAndDrop.makeDraggable($(overlay), {
                 remember: false,
                 onDrop: function () {
-                    self.options.position.x = parseInt(this.style.left, 10);
-                    self.options.position.y = parseInt(this.style.top, 10);
+                    layerOptions = Layers.getOptions(layer_id);
+                    layerOptions.position.x = parseInt(this.style.left, 10);
+                    layerOptions.position.y = parseInt(this.style.top, 10);
+                    Layers.storeOptions(layer_id, layerOptions);
                     self.refreshInterface.call(self);
                 }
             });
@@ -83,13 +75,17 @@ var PixelPerfect = {
             return false;
         }
 
-        if (this.options.overlay === 'below') {
-            $(this.wrapper).setOpacity(this.options.opacity);
+        if (!layerOptions) {
+            layerOptions = Layers.getOptions(Layers.fillSelected());
+        }
+
+        if (layerOptions.overlay === 'below') {
+            $(this.wrapper).setOpacity(layerOptions.opacity);
             $(overlay).setOpacity(100);
             overlay.style.zIndex = '-2147483645';
         } else {
             $(this.wrapper).setOpacity(100);
-            $(overlay).setOpacity(this.options.opacity);
+            $(overlay).setOpacity(layerOptions.opacity);
             overlay.style.zIndex = '2147483645';
         }
 
@@ -97,8 +93,8 @@ var PixelPerfect = {
             $('body > .pixelperfect-wrapper').setOpacity(100);
         }
 
-        overlay.style.left = this.options.position.x + 'px';
-        overlay.style.top = this.options.position.y + 'px';
+        overlay.style.left = layerOptions.position.x + 'px';
+        overlay.style.top = layerOptions.position.y + 'px';
         this.updateOptions();
     },
 
@@ -148,18 +144,26 @@ var PixelPerfect = {
     },
 
     updateOptions: function () {
-        this.DOM['overlay-' + this.options.overlay].checked = true;
-        this.DOM.opacity.value = this.options.opacity;
-        this.DOM['opacity-range'].value = this.options.opacity;
-        this.DOM.x.value = this.options.position.x;
-        this.DOM.y.value = this.options.position.y;
+        var layer_id = Layers.fillSelected(),
+            layerOptions = Layers.getOptions(layer_id);
+
+        this.DOM['overlay-' + layerOptions.overlay].checked = true;
+        this.DOM.opacity.value = layerOptions.opacity;
+        this.DOM['opacity-range'].value = layerOptions.opacity;
+        this.DOM.x.value = layerOptions.position.x;
+        this.DOM.y.value = layerOptions.position.y;
     },
 
     applyOptions: function () {
-        this.options.overlay = this.DOM['overlay-over'].checked ? 'over' : 'below';
-        this.options.opacity = this.DOM.opacity.value;
-        this.options.position.x = (parseInt(this.DOM.x.value, 10) || 0).toString();
-        this.options.position.y = (parseInt(this.DOM.y.value, 10) || 0).toString();
+        var layer_id = Layers.fillSelected();
+        Layers.storeOptions(layer_id, {
+            overlay: this.DOM['overlay-over'].checked ? 'over' : 'below',
+            opacity: this.DOM.opacity.value,
+            position: {
+                x: (parseInt(this.DOM.x.value, 10) || 0).toString(),
+                y: (parseInt(this.DOM.y.value, 10) || 0).toString()
+            }
+        });
     },
 
     storeOptions: function () {
@@ -167,11 +171,7 @@ var PixelPerfect = {
 
         for (option in this.options) {
             if (this.options.hasOwnProperty(option)) {
-                if (option === 'position') {
-                    localStorage.setItem('pixelperfect:options:' + option, this.options[option].x + ',' + this.options[option].y);
-                } else {
-                    localStorage.setItem('pixelperfect:options:' + option, this.options[option]);
-                }
+                localStorage.setItem('pixelperfect:options:' + option, this.options[option]);
             }
         }
     },
@@ -396,7 +396,8 @@ var PixelPerfect = {
         });
 
         $(document).event(PP.keys.event, function (e) {
-            var overlayRadio = false, option;
+            var overlayRadio = false, option,
+                layerOptions = Layers.getOptions(Layers.fillSelected());
             // overlay
             // over [ O ]
             if (overlayMode && !e.ctrlKey && e.which === PP.keys.O) {
@@ -495,11 +496,11 @@ var PixelPerfect = {
             }
             // increase [ > ]
             if (e.ctrlKey && e.which === PP.keys['^>']) {
-                self.setParam('opacity', parseInt(self.options.opacity, 10) + 1);
+                self.setParam('opacity', parseInt(layerOptions.opacity, 10) + 1);
             }
             // decrease [ < ]
             if (e.ctrlKey && e.which === PP.keys['^<']) {
-                self.setParam('opacity', self.options.opacity - 1);
+                self.setParam('opacity', layerOptions.opacity - 1);
             }
 
             // hide [ H ]

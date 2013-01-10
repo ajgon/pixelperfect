@@ -18,7 +18,7 @@
 * browsers support
 * document code
 * ~~translations~~
-* remember options for each layer separately
+* ~~remember options for each layer separately~~
 * add 'URL...' placeholder to input
 
 ## Clean code
