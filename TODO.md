@@ -20,6 +20,7 @@
 * ~~translations~~
 * ~~remember options for each layer separately~~
 * ~~add 'URL...' placeholder to input~~
+* fix an inactive drag'n'drop field when file is over the text
 
 ## Clean code
 * ~~move document.getElementById('pixelperfect') to PixelPerfect.container~~

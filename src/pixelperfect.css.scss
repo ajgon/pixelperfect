@@ -12,8 +12,6 @@ $selected: #7c6996;
   border-radius: 8px;
   -moz-box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
   -webkit-box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
-  -o-box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
-  -ms-box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
   z-index: 2147483646;
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAASwCAYAAAA6zCBKAAAAR0lEQVRYR+3LsQ0AMQhDUYv12L++liUwVxApQ+Q3TzI2kZlfzIyW7lZIUtievdk+0fbZ3ULSRFX1vgEAAAAAAAAAAAAAPMgPiMMynVsII3gAAAAASUVORK5CYII=) left top repeat-x;
@@ -34,10 +32,6 @@ $selected: #7c6996;
   }
 
   * {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    text-decoration: none;
-    color: #fff;
     margin: 0;
     padding: 0;
   }
@@ -83,8 +77,6 @@ $selected: #7c6996;
     border: 1px solid #c0c0c0;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
-    -o-border-radius: 3px;
-    -ms-border-radius: 3px;
     border-radius: 3px;
     background: #fff;
     color: #333;
@@ -168,8 +160,6 @@ $selected: #7c6996;
       height: 14px;
       -moz-border-radus: 7px;
       -webkit-border-radius: 7px;
-      -o-border-radius: 7px;
-      -ms-border-radius: 7px;
       border-radius: 7px;
       background: #ccc;
       position: absolute;
@@ -207,8 +197,6 @@ $selected: #7c6996;
         padding: 5px 30px 5px 5px;
         -moz-border-radius: 10px;
         -webkit-border-radius: 10px;
-        -o-border-radius: 10px;
-        -ms-border-radius: 10px;
         border-radius: 10px;
         overflow: auto;
         position: relative;
@@ -244,8 +232,6 @@ $selected: #7c6996;
       color: #999;
       -moz-border-radius: 10px;
       -webkit-border-radius: 10px;
-      -o-border-radius: 10px;
-      -ms-border-radius: 10px;
       border-radius: 10px;
     }
 
@@ -275,8 +261,6 @@ $selected: #7c6996;
   margin: -200px 0 0 -390px;
   -moz-border-radius: 20px;
   -webkit-border-radius: 20px;
-  -ms-border-radius: 20px;
-  -o-border-radius: 20px;
   border-radius: 20px;
   z-index: -2147483647;
   padding: 20px 20px 10px;
@@ -332,4 +316,18 @@ $selected: #7c6996;
 
   }
 
+}
+
+#pixelperfect,
+#pixelperfect *,
+#pixelperfect-help-popup,
+#pixelperfect-help-popup * {
+  line-height: normal;
+  box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+  color: #fff;
 }
