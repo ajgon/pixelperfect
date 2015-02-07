@@ -1,10 +1,11 @@
 source 'http://rubygems.org'
 
-gem 'rake'
-gem 'sprockets'
-gem 'uglifier'
-gem 'yui-compressor'
-gem 'sass'
+group :development do
+  gem 'rake'
+  gem 'sprockets'
+  gem 'uglifier'
+  gem 'sass'
+end
 
 group :test do
   gem "jslint"

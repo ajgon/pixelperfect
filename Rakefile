@@ -52,7 +52,6 @@ end
 def build type = :production, lang = nil
   require 'sprockets'
   require 'uglifier'
-  require 'yui/compressor'
   require 'base64'
   require 'yaml'
   sprockets = Sprockets::Environment.new(File.dirname(__FILE__))
@@ -67,7 +66,7 @@ def build type = :production, lang = nil
 
   # Build CSS
   css = sprockets.find_asset('pixelperfect.css.scss').to_s
-  css = YUI::CssCompressor.new.compress( css )
+  css = Sass.compile(css, { :style => :compressed })
 
   # Build JS
   js = closure sprockets.find_asset('pixelperfect.js').to_s
